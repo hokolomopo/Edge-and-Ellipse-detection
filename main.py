@@ -1,9 +1,6 @@
 import numpy as np
 import cv2
 
-def resize_img(img, sizeX, sizeY):
-    return cv2.resize(img, (sizeX, sizeY))
- 
 def display_img(img, wait=True):
     """
     Display an image
@@ -22,5 +19,6 @@ if __name__ == "__main__":
 
     # Load the image
     img = cv2.imread('img/building.png', cv2.IMREAD_GRAYSCALE)
-    display_img(resize_img(img, 500, 500))
+    img = cv2.resize(img, (500, 500))
+    display_img(img)
 
