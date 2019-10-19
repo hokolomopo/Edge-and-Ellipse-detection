@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import tools
 
 def saturate_cast_uint8(img):
 	"""
@@ -79,3 +80,17 @@ def stacking(img, saturate = True):
 	grad = cv2.addWeighted(grad, 1., scharr, 1/3, 0)
 
 	return clean_grad(grad, saturate, 128)
+	
+def high_pass(img, strength=3.0, kernel_size=9):
+	"""copié collé du cours"""
+	img_avg = cv2.GaussianBlur(img, ( kernel_size, kernel_size), 0)
+
+	sharpened = tools.saturate_cast_uint8( strength * img - ( strength - 1.0) * img_avg)
+	return sharpened
+
+def beucher(img):
+	"""beucher gradient (non linéaire)"""
+	kernel = np.ones((3,3),np.uint8)
+	grad = cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
+
+	return grad

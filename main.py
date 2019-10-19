@@ -64,9 +64,16 @@ def compare_gradient_main(imageName):
     grad = np.concatenate((img, grad_naive, grad_sobel, grad_scharr, grad_majority), axis = 1)
     display_img(grad, True)
 
+def beucher_main():
+    img = load_gray_img('img/road.png')
+    grad = beucher(img)
+    display_img(grad)
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
-    parser.add_argument("-mode", type=str, choices=["show", "sobel", "naive_gradient", "scharr", "stacking", "compare_gradient"], default='show')
+
+    parser.add_argument("-mode", type=str, choices=["show", "sobel", "naive_gradient", "scharr", "stacking", "compare_gradient", "beucher", "compare"], default='show')
     parser.add_argument("-task", type=str, choices=["main", "threshold", "filter", "kernel_filter", "filter_strength"], default = "main")
     parser.add_argument("-image", type=str, default="building")
     
@@ -80,6 +87,16 @@ if __name__ == "__main__":
 
     elif mode == "compare_gradient":
         compare_gradient_main(imageName)
+
+    elif mode == "beucher":
+        beucher_main()
+
+    elif mode=="compare":
+        img = load_gray_img('img/road.png')
+        img1 = beucher(img)
+        img2 = cv2.fastNlMeansDenoising(img1, None,10,7,21)
+        # img2 = np.where(img1 > 50, img1, 0)
+        display_img(np.concatenate((img1, img2),axis=1))
 
     else:
         # Determine method
