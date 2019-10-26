@@ -38,3 +38,4 @@ def load_gray_img(fileName):
     #img = cv2.resize(img, (500, 500))
 
     return img
+    
