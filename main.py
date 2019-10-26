@@ -92,10 +92,11 @@ if __name__ == "__main__":
         beucher_main()
 
     elif mode=="compare":
-        img = load_gray_img('img/road.png')
-        img1 = beucher(img)
-        img2 = cv2.fastNlMeansDenoising(img1, None,10,7,21)
-        # img2 = np.where(img1 > 50, img1, 0)
+        img = load_gray_img('img/boat.png')
+        # img1 = beucher(img
+        img1 = sobel_edge(cv2.GaussianBlur( img, ( 3, 3), 0))
+        img2 = high_pass(beucher(cv2.GaussianBlur( img, ( 3, 3), 0)))
+        # img2 = np.where(img2 > 70, 255.0, 0)
         display_img(np.concatenate((img1, img2),axis=1))
 
     else:
