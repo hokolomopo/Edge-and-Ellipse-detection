@@ -7,15 +7,16 @@ from edge import *
 
 def show_main(imageName):
     # Load the image
-    img = load_gray_img(iamgeName)
+    img = load_gray_img(imageName)
     display_img(img)
 
 def method_main(imageName, method):
     img = load_gray_img(imageName)
     grad_no_saturate = method(img, False)
     grad_saturate = method(img, True)
-    grad = np.concatenate((img, grad_no_saturate, grad_saturate), axis = 1)
-    display_img(grad, True)
+    imgList = (img, grad_no_saturate, grad_saturate)
+    grad = np.concatenate(imgList, axis = 1)
+    display_img(grad, len(imgList), True)
 
 def threshold_main(imageName, method):
     img = load_gray_img(imageName)
@@ -27,15 +28,17 @@ def threshold_main(imageName, method):
     grad_64 = method(img, threshold = 64)
     grad_96 = method(img, threshold = 96)
     grad_128 = method(img, threshold = 128)
-    grad = np.concatenate((img, grad_4, grad_6, grad_8, grad_16, grad_32, grad_64, grad_96, grad_128), axis = 1)
-    display_img(grad, True)
+    imgList = (img, grad_4, grad_6, grad_8, grad_16, grad_32, grad_64, grad_96, grad_128)
+    grad = np.concatenate(imgList, axis = 1)
+    display_img(grad, len(imgList), True)
 
 def filtering_main(imageName, method):
     img = load_gray_img(imageName)
     no_filter = method(img, filtering = False)
     filter_ = method(img, filtering = True)
-    grad = np.concatenate((img, no_filter, filter_), axis = 1)
-    display_img(grad, True)
+    imgList = (img, no_filter, filter_)
+    grad = np.concatenate(imgList, axis = 1)
+    display_img(grad, len(imgList), True)
 
 def filter_kernel_main(imageName, method):
     img = load_gray_img(imageName)
@@ -43,8 +46,9 @@ def filter_kernel_main(imageName, method):
     kernel_3 = method(img, filtering = True, filtering_kernel_size = 3)
     kernel_5 = method(img, filtering = True, filtering_kernel_size = 5)
     kernel_7 = method(img, filtering = True, filtering_kernel_size = 7)
-    grad = np.concatenate((img, kernel_1, kernel_3, kernel_5, kernel_7), axis = 1)
-    display_img(grad, True)
+    imgList = (img, kernel_1, kernel_3, kernel_5, kernel_7)
+    grad = np.concatenate(imgList, axis = 1)
+    display_img(grad, len(imgList), True)
 
 def filter_strength_main(imageName, method):
     img = load_gray_img(imageName)
@@ -52,23 +56,24 @@ def filter_strength_main(imageName, method):
     strength_2 = method(img, filtering = True, filtering_strength = 2)
     strength_3 = method(img, filtering = True, filtering_strength = 3)
     strength_5 = method(img, filtering = True, filtering_strength = 5)
-    grad = np.concatenate((img, strength_1, strength_2, strength_3, strength_5), axis = 1)
-    display_img(grad, True)
+    imgList = (img, strength_1, strength_2, strength_3, strength_5)
+    grad = np.concatenate(imgList, axis = 1)
+    display_img(grad, len(imgList), True)
 
 def compare_gradient_main(imageName):
     img = load_gray_img(imageName)
     grad_sobel = sobel_edge(img)
     grad_naive = naive_gradient(img)
     grad_scharr = scharr_edge(img)
-    grad_majority = majority_voter(img)
-    grad = np.concatenate((img, grad_naive, grad_sobel, grad_scharr, grad_majority), axis = 1)
-    display_img(grad, True)
+    grad_majority = stacking(img)
+    imgList = (img, grad_naive, grad_sobel, grad_scharr, grad_majority)
+    grad = np.concatenate(imgList, axis = 1)
+    display_img(grad, len(imgList), True)
 
 def beucher_main():
     img = load_gray_img('img/road.png')
     grad = beucher(img)
     display_img(grad)
-
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')

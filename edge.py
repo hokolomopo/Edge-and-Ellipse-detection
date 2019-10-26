@@ -17,18 +17,48 @@ def clean_grad(grad, saturate, threshold):
 
 	return grad
 
-def high_pass_filter(img, kernel_size, strength):
-	lowPass = cv2.GaussianBlur(img, (kernel_size, kernel_size), 0)
+def low_pass_filter(img, kernel_size, filter_type):
+	if filter_type == "uniform":
+		ka7 = np.ones((kernel_size, kernel_size), dtype=float) / 80
+		lowPass = cv2.filter2D(img, -1, ka7, borderType=cv2.BORDER_CONSTANT)
+	if filter_type == "median":
+		lowPass = cv2.medianBlur(img, kernel_size)
+	elif filter_type == "gaussian":
+		lowPass = cv2.GaussianBlur(img, (kernel_size, kernel_size), 0)
+	
+	return lowPass
+
+def high_pass_filter(img, kernel_size, strength, filter_type):
+	"""
+	Taken from practical sessions
+	"""
+	
+	lowPass = low_pass_filter(img, kernel_size, filter_type)
+	#lowPass = cv2.GaussianBlur(img, (kernel_size, kernel_size), 0)
 	return saturate_cast_uint8(strength * img - ( strength - 1.0) * lowPass)
 
-def sobel_edge(img, saturate = True, threshold = 32, filtering = True, filtering_kernel_size = 1, filtering_strength = 2, kernel_size = 1):
+def filtering(img, low_filtering = False, low_filter_type = None, low_filtering_kernel_size = None, 
+			  high_filtering = False, high_filter_type = None, high_filtering_kernel_size = None, 
+			  high_filtering_strength = None):
+	
+	if low_filtering:
+		img = low_pass_filter(img, low_filtering_kernel_size, low_filter_type)
+
+	if high_filtering:
+		img = high_pass_filter(img, high_filtering_kernel_size, high_filtering_strength, high_filter_type)
+
+	return img
+
+def sobel_edge(img, saturate = True, threshold = 15, low_filtering = True, low_filter_type = "uniform", 
+			   low_filtering_kernel_size = 5, high_filtering = True, high_filter_type = "gaussian",  
+			   high_filtering_kernel_size = 1 , high_filtering_strength = 2, kernel_size = 1):
 	"""
 	https://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/sobel_derivatives/sobel_derivatives.html
 	TODO: Voir convention calcul des gradients (si ca se met sur la case haut, bas, gauche, droite ...) et indiquer dans le rapport
 	"""
 
-	if filtering:
-		img = high_pass_filter(img, filtering_kernel_size, filtering_strength)
+	img = filtering(img, low_filtering, low_filter_type, low_filtering_kernel_size,
+					high_filtering, high_filter_type, high_filtering_kernel_size, high_filtering_strength)
 
 	gradientX = cv2.Sobel(img, -1, 1, 0, kernel_size)
 	gradientY = cv2.Sobel(img, -1, 0, 1, kernel_size)
@@ -40,9 +70,11 @@ def sobel_edge(img, saturate = True, threshold = 32, filtering = True, filtering
 
 	return clean_grad(grad, saturate, threshold)
 
-def naive_gradient(img, saturate = True, threshold = 16, filtering = True, filtering_kernel_size = 1, filtering_strength = 2):
-	if filtering:
-		img = high_pass_filter(img, filtering_kernel_size, filtering_strength)
+def naive_gradient(img, saturate = True, threshold = 16, low_filtering = True, low_filter_type = "uniform", 
+			       low_filtering_kernel_size = 5, high_filtering = True, high_filter_type = "gaussian",  
+			       high_filtering_kernel_size = 1 , high_filtering_strength = 2):
+	img = filtering(img, low_filtering, low_filter_type, low_filtering_kernel_size,
+					high_filtering, high_filter_type, high_filtering_kernel_size, high_filtering_strength)
 
 	xFilter = np.array([[-1, 0, 1]])
 	yFilter = np.array([[-1], [0], [1]])
@@ -57,9 +89,11 @@ def naive_gradient(img, saturate = True, threshold = 16, filtering = True, filte
 
 	return clean_grad(grad, saturate, threshold)
 
-def scharr_edge(img, saturate = True, threshold = 64, filtering = True, filtering_kernel_size = 5, filtering_strength = 2):
-	if filtering:
-		img = high_pass_filter(img, filtering_kernel_size, filtering_strength)
+def scharr_edge(img, saturate = True, threshold = 64, low_filtering = True, low_filter_type = "uniform", 
+			    low_filtering_kernel_size = 5, high_filtering = True, high_filter_type = "gaussian",  
+			    high_filtering_kernel_size = 5 , high_filtering_strength = 2):
+	img = filtering(img, low_filtering, low_filter_type, low_filtering_kernel_size,
+					high_filtering, high_filter_type, high_filtering_kernel_size, high_filtering_strength)
 
 	gradientX = cv2.Scharr(img, cv2.CV_32F, 1, 0)/4.0
 	gradientY = cv2.Scharr(img, cv2.CV_32F, 0, 1)/4.0
