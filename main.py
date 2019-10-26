@@ -1,9 +1,14 @@
 import numpy as np
 import cv2
 import argparse
+import math
 
+from copy import deepcopy
 from image import *
 from edge import *
+
+import tools
+import matplotlib.cm as cm   
 
 def show_main(imageName):
     # Load the image
@@ -75,10 +80,49 @@ def beucher_main():
     grad = beucher(img)
     display_img(grad)
 
+def test_lines_main(imageName):
+    img = load_gray_img(imageName)
+    test_lines(img)
+
+def test_lines(img):
+
+    # Find edges
+    edges = sobel_edge(img, threshold=10)
+
+    # Apply Hough method
+    lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold=50, minLineLength=30, maxLineGap=10)
+
+    # Draw image wiht lines foud with Hough
+    img_w_lines = np.zeros(edges.shape)
+    for line in lines:
+        x1, y1, x2, y2 = line[0]
+        cv2.line(img_w_lines, (x1, y1), (x2, y2), (255, 0, 0), 1)  
+
+    # Find Edges points that belong to a line
+    final = np.zeros(edges.shape)
+    kernel_size = 3
+    kernel = np.ones((kernel_size, kernel_size))
+    r = cv2.filter2D(img_w_lines, -1, kernel, borderType=cv2.BORDER_CONSTANT)
+
+    for i in range(edges.shape[0]):
+        for j in range(edges.shape[1]):
+            if(edges[i][j] == 0):
+                continue
+            if(r[i][j] > 0):
+                final[i][j] = 255
+            else:
+                final[i][j] = 0
+
+    tools.multiPlot(1, 4, 
+                (edges, img_w_lines, final, edges-final),
+                ('Edges', 'Lines detected', 'Only Edges on Lines', 'Only Edges not on Lines'),
+                cmap_tuple=(cm.gray, cm.gray, cm.gray, cm.gray))
+
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
 
-    parser.add_argument("-mode", type=str, choices=["show", "sobel", "naive_gradient", "scharr", "stacking", "compare_gradient", "beucher", "compare"], default='show')
+    parser.add_argument("-mode", type=str, choices=["show", "sobel", "naive_gradient", "scharr", "stacking", "compare_gradient", "beucher", "compare", "lines"], default='lines')
     parser.add_argument("-task", type=str, choices=["main", "threshold", "filter", "kernel_filter", "filter_strength"], default = "main")
     parser.add_argument("-image", type=str, default="building")
     
@@ -103,6 +147,9 @@ if __name__ == "__main__":
         img2 = high_pass(beucher(cv2.GaussianBlur( img, ( 3, 3), 0)))
         # img2 = np.where(img2 > 70, 255.0, 0)
         display_img(np.concatenate((img1, img2),axis=1))
+    
+    elif mode == "lines":
+        test_lines_main('img/road.png')
 
     else:
         # Determine method
@@ -117,6 +164,9 @@ if __name__ == "__main__":
 
         elif mode == "stacking":
             method = stacking
+
+        
+
 
         # Determine task
         if task == "main":

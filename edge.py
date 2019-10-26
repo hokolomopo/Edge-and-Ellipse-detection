@@ -124,7 +124,10 @@ def high_pass(img, strength=3.0, kernel_size=9):
 
 def beucher(img):
 	"""beucher gradient (non linéaire)"""
+
+	img_lp = cv2.GaussianBlur( img, ( 5, 5), 0)
 	kernel = np.ones((3,3),np.uint8)
-	grad = cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
+	grad = cv2.morphologyEx(img_lp, cv2.MORPH_GRADIENT, kernel)
+	grad = clean_grad(grad, False, 35)
 
 	return grad
