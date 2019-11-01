@@ -8,14 +8,14 @@ from image import *
 from edge import *
 from line import *
 
-
-def update_edges(   method="sobel", image="building", low_filtering=True,
-                    low_filter_type="gaussian", low_filtering_kernel_size=5,
-                    high_filtering=False, high_filter_type="gaussian",
-                    high_filtering_kernel_size=3, strength=2.0, threshold=True,
-                    block_size=11, constant=3, edge_threshold=30,
-                    low_threshold=50, high_threshold=255, aperture_size=3):
-
+def update_edges(method="sobel", image="building", low_filtering=True,
+                 low_filter_type="gaussian", low_filtering_kernel_size=5,
+                 high_filtering=False, high_filter_type="gaussian",
+                 high_filtering_kernel_size=3, strength=2.0, threshold=True,
+                 block_size=11, constant=3, edge_threshold=30,
+                 low_threshold=50, high_threshold=255, aperture_size=3,
+                 kernel_size=1):
+    
     img = load_gray_img("img/{}.png".format(image))
 
     img_filtered = filtering(img, low_filtering, low_filter_type, low_filtering_kernel_size,
@@ -27,8 +27,8 @@ def update_edges(   method="sobel", image="building", low_filtering=True,
                 cv2.THRESH_BINARY, block_size, constant)
 
     if method == "sobel":
-        grad = sobel_edge(img_threshold, thresholding = True, threshold = edge_threshold)
-
+        grad = sobel_edge(img_threshold, thresholding = True, threshold = edge_threshold, kernel_size = kernel_size)
+    
     elif method == "naive_gradient":
         grad = naive_gradient(img_threshold, thresholding = True, threshold = edge_threshold)
 

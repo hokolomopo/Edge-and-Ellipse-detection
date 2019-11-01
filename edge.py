@@ -272,7 +272,6 @@ def beucher_edge(img, thresholding=True, threshold=60):
 
     Returns
     -------
-
     A opencv image with the edges of the original image
 	"""
 	kernel = np.ones((3,3),np.uint8)
