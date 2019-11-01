@@ -15,6 +15,7 @@ def saturate_cast_uint8(img):
 
 	Returns
     -------
+
     The saturated image
 	"""
 
@@ -33,6 +34,7 @@ def clean_grad(grad, saturate, threshold):
 
     Returns
     -------
+
     The cleaned gradients
     """
 
@@ -56,6 +58,7 @@ def low_pass_filter(img, kernel_size, filter_type):
 
     Returns
     -------
+
     The low-pass filtered image
 	"""
 
@@ -85,6 +88,7 @@ def high_pass_filter(img, kernel_size, strength, filter_type):
 
     Returns
     -------
+
     The high-pass filtered image
 	"""
 	
@@ -118,6 +122,7 @@ def filtering(img, low_filtering=False, low_filter_type=None,
 
     Returns
     -------
+
     The filtered image
 	"""
 	
@@ -147,7 +152,9 @@ def sobel_edge(img, thresholding = True, threshold=15, kernel_size=1):
 
     Returns
     -------
-    A opencv image with the edges of the original image
+
+    A opencv image with the pixel corresponding to edges set to 255 and the 
+    others set to 0
 	"""
 
 	gradientX = cv2.Sobel(img, -1, 1, 0, kernel_size)
@@ -177,7 +184,9 @@ def naive_gradient(img, thresholding = True, threshold=16):
 
     Returns
     -------
-    A opencv image with the edges of the original image
+
+    A opencv image with the pixel corresponding to edges set to 255 and the 
+    others set to 0
 	"""
 
 	xFilter = np.array([[-1, 0, 1]])
@@ -209,7 +218,9 @@ def scharr_edge(img, thresholding = True, threshold=64):
     						   edge
     Returns
     -------
-    A opencv image with the edges of the original image
+
+    A opencv image with the pixel corresponding to edges set to 255 and the 
+    others set to 0
 	"""
 
 
@@ -238,7 +249,9 @@ def canny_edge(img, low_threshold=50, high_threshold=255, aperture_size=3):
 
     Returns
     -------
-    A opencv image with the edges of the original image
+
+    A opencv image with the pixel corresponding to edges set to 255 and the 
+    others set to 0
 	"""
 	
 	return cv2.Canny(img, low_threshold, high_threshold, None, aperture_size)
