@@ -132,12 +132,14 @@ def high_pass(img, strength=3.0, kernel_size=9):
 	sharpened = tools.saturate_cast_uint8( strength * img - ( strength - 1.0) * img_avg)
 	return sharpened
 
-def beucher(img):
+def beucher(img, low_filtering = True, low_filtering_kernel_size = 1, threshold = 60):
 	"""beucher gradient (non linéaire)"""
 
-	img_lp = cv2.GaussianBlur( img, ( 5, 5), 0)
+	if low_filtering:
+		img_lp = cv2.GaussianBlur( img, ( low_filtering_kernel_size, low_filtering_kernel_size), 0)
+
 	kernel = np.ones((3,3),np.uint8)
 	grad = cv2.morphologyEx(img_lp, cv2.MORPH_GRADIENT, kernel)
-	grad = clean_grad(grad, False, 35)
+	grad = clean_grad(grad, False, threshold)
 
 	return grad
