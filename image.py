@@ -7,8 +7,8 @@ def display_img(img, nbImages = 1, wait = True):
     Parameters
     ----------
 
-    img : the image to display
-    wait : if True, wait for the windows to be closed before continuing the program
+    - img :     the image to display
+    - wait :    if True, wait for the windows to be closed before continuing the program
     """
     img = cv2.resize(img, (500 * nbImages, 500))
 
@@ -23,7 +23,7 @@ def load_gray_img(fileName):
 
     Parameters
     ----------
-    fileName: The name of the file containing the image
+    - fileName: The name of the file containing the image
 
     Return
     ------
