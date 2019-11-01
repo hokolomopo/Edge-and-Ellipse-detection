@@ -8,6 +8,44 @@ from image import *
 from edge import *
 from line import *
 
+def update_method(method="sobel"):
+    kwargs = {
+    "image": ["building", "sudoku", "soccer", "road", "pcb"],
+    "low_filtering": True,
+    "low_filter_type": ["uniform", "median", "gaussian"],
+    "low_filtering_kernel_size": (1, 9, 2),
+    "high_filtering": True,
+    "high_filter_type": ["uniform", "median", "gaussian"],
+    "high_filtering_kernel_size": (1, 9, 2),
+    "strength": (1.5, 5.0, 0.5),
+    "threshold": True,
+    "block_size": (3, 27, 4),
+    "constant": (1, 11, 2)
+    }
+
+    if method == "sobel":
+        interact((lambda **x: update_edges(method = "sobel", **x)), 
+                  **dict(kwargs, **{"edge_threshold": (0, 100, 10),
+                                    "kernel_size": (1, 7, 2)}))
+
+    elif method == "canny":
+        interact((lambda **x: update_edges(method = "sobel", **x)), 
+                  **dict(kwargs, **{"low_threshold": (0, 100, 10), 
+                                    "high_threshold": (200, 250, 10), 
+                                    "aperture_size": (1, 11, 2)}))
+
+    elif method == "naive_gradient":
+        interact((lambda **x: update_edges(method = "sobel", **x)), 
+                  **dict(kwargs, **{"edge_threshold": (0, 100, 10)}))
+
+    elif method == "scharr":
+        interact((lambda **x: update_edges(method = "sobel", **x)), 
+                  **dict(kwargs, **{"edge_threshold": (0, 100, 10)}))
+
+    elif method == "beucher":
+        interact((lambda **x: update_edges(method = "sobel", **x)), 
+                  **dict(kwargs, **{"edge_threshold": (0, 100, 10)}))
+
 def update_edges(method="sobel", image="building", low_filtering=True,
                  low_filter_type="gaussian", low_filtering_kernel_size=5,
                  high_filtering=False, high_filter_type="gaussian",
