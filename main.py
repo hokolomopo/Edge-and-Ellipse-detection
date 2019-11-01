@@ -79,16 +79,17 @@ def compare_gradient_main(imageName):
 def lines_main(imageName, method):
     img = load_gray_img(imageName)
 
-    edges = method(img, low_filtering = True, low_filtering_kernel_size = 3)
+    edges = method(img, threshold=50)
 
     # Apply Hough method
     lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold=50, minLineLength=30, maxLineGap=10)
 
     # Draw image wiht lines foud with Hough
     img_w_lines = np.zeros(edges.shape)
-    for line in lines:
-        x1, y1, x2, y2 = line[0]
-        cv2.line(img_w_lines, (x1, y1), (x2, y2), (255, 0, 0), 1)  
+    if lines is not None:
+        for line in lines:
+            x1, y1, x2, y2 = line[0]
+            cv2.line(img_w_lines, (x1, y1), (x2, y2), (255, 0, 0), 1)  
 
 
     final = get_edges_on_lines(edges, img_w_lines)

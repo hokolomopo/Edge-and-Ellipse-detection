@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import tools
+from image import *
 
 def saturate_cast_uint8(img):
 	"""
@@ -128,11 +129,7 @@ def filtering(img, low_filtering=False, low_filter_type=None,
 
 	return img
 
-def sobel_edge(img, threshold=15, low_filtering=True, 
-			   low_filter_type="uniform", low_filtering_kernel_size=5, 
-			   high_filtering=True, high_filter_type="gaussian",  
-			   high_filtering_kernel_size=1, high_filtering_strength=2, 
-			   kernel_size=1):
+def sobel_edge(img, thresholding = True, threshold=15, kernel_size=1):
 	"""
 	https://docs.opencv.org/2.4/doc/tutorials/imgproc/imgtrans/
 	sobel_derivatives/sobel_derivatives.html
@@ -143,29 +140,15 @@ def sobel_edge(img, threshold=15, low_filtering=True,
     ----------
     
     - img: 		   			   The image on which to apply the filter
+	- thresholding:			   Boolean for wether or not a thresholing is applied to the edges
     - threshold: 			   The threshold at which to consider a pixel as an 
     						   edge
-    - low_filtering: 		   A boolean indicating whether to apply a low pass 
-    						   filter
-    - low_filter_type: 		   The type of low pass filtering to apply, can be 
-    						   either "uniform", "median" or "gaussian".
-    - low_filter_kernel_size:  The kernel size of the low pass filter
-    - high_filtering: 		   A boolean indicating whether to apply a high pass 
-    						   filter
-   	- high_filter_type: 	   The type of high pass filtering to apply, can be 
-   							   either "uniform", "median" or "gaussian".
-    - ligh_filter_kernel_size: The kernel size of the high pass filter
-    - high_filtering_strength: The strength of the high pass filter
     - kernel_size:			   The size of the sobel kernel.
 
     Returns
     -------
-    A opencv image with the pixel corresponding to edges set to 255 and the 
-    others set to 0
+    A opencv image with the edges of the original image
 	"""
-
-	img = filtering(img, low_filtering, low_filter_type, low_filtering_kernel_size,
-					high_filtering, high_filter_type, high_filtering_kernel_size, high_filtering_strength)
 
 	gradientX = cv2.Sobel(img, -1, 1, 0, kernel_size)
 	gradientY = cv2.Sobel(img, -1, 0, 1, kernel_size)
@@ -175,12 +158,12 @@ def sobel_edge(img, threshold=15, low_filtering=True,
 
 	grad = cv2.addWeighted(absGradientX, 0.5, absGradientY, 0.5, 0)
 
-	return clean_grad(grad, False, threshold)
+	if thresholding:
+		grad = clean_grad(grad, False, threshold)
 
-def naive_gradient(img, threshold=16, low_filtering=True, 
-				   low_filter_type="uniform", low_filtering_kernel_size=5, 
-				   high_filtering=True, high_filter_type="gaussian",  
-			       high_filtering_kernel_size=1, high_filtering_strength=2):
+	return grad
+
+def naive_gradient(img, thresholding = True, threshold=16):
 	"""
 	Compute the edges of an image computing gradients of the image.
 
@@ -188,28 +171,14 @@ def naive_gradient(img, threshold=16, low_filtering=True,
     ----------
     
     - img: 		   			   The image on which to apply the filter
+	- thresholding:			   Boolean for wether or not a thresholing is applied to the edges
     - threshold: 			   The threshold at which to consider a pixel as an 
     						   edge
-    - low_filtering: 		   A boolean indicating whether to apply a low pass 
-    						   filter
-    - low_filter_type: 		   The type of low pass filtering to apply, can be 
-    						   either "uniform", "median" or "gaussian".
-    - low_filter_kernel_size:  The kernel size of the low pass filter
-    - high_filtering: 		   A boolean indicating whether to apply a high pass 
-    						   filter
-   	- high_filter_type: 	   The type of high pass filtering to apply, can be 
-   							   either "uniform", "median" or "gaussian".
-    - ligh_filter_kernel_size: The kernel size of the high pass filter
-    - high_filtering_strength: The strength of the high pass filter
 
     Returns
     -------
-    A opencv image with the pixel corresponding to edges set to 255 and the 
-    others set to 0
+    A opencv image with the edges of the original image
 	"""
-
-	img = filtering(img, low_filtering, low_filter_type, low_filtering_kernel_size,
-					high_filtering, high_filter_type, high_filtering_kernel_size, high_filtering_strength)
 
 	xFilter = np.array([[-1, 0, 1]])
 	yFilter = np.array([[-1], [0], [1]])
@@ -222,12 +191,12 @@ def naive_gradient(img, threshold=16, low_filtering=True,
 
 	grad = cv2.addWeighted(absGradientX, 0.5, absGradientY, 0.5, 0)
 
-	return clean_grad(grad, False, threshold)
+	if thresholding:
+		grad = clean_grad(grad, False, threshold)
 
-def scharr_edge(img, threshold=64, low_filtering=True, 
-				low_filter_type="uniform", low_filtering_kernel_size=5, 
-				high_filtering=True, high_filter_type="gaussian",  
-			    high_filtering_kernel_size=5 , high_filtering_strength=2):
+	return grad
+
+def scharr_edge(img, thresholding = True, threshold=64):
 	"""
 	Compute the edges of an image using the Scharr method.
 
@@ -235,28 +204,14 @@ def scharr_edge(img, threshold=64, low_filtering=True,
     ----------
     
     - img: 		   			   The image on which to apply the filter
+	- thresholding:			   Boolean for wether or not a thresholing is applied to the edges
     - threshold: 			   The threshold at which to consider a pixel as an 
     						   edge
-    - low_filtering: 		   A boolean indicating whether to apply a low pass 
-    						   filter
-    - low_filter_type: 		   The type of low pass filtering to apply, can be 
-    						   either "uniform", "median" or "gaussian".
-    - low_filter_kernel_size:  The kernel size of the low pass filter
-    - high_filtering: 		   A boolean indicating whether to apply a high pass 
-    						   filter
-   	- high_filter_type: 	   The type of high pass filtering to apply, can be 
-   							   either "uniform", "median" or "gaussian".
-    - ligh_filter_kernel_size: The kernel size of the high pass filter
-    - high_filtering_strength: The strength of the high pass filter
-
     Returns
     -------
-    A opencv image with the pixel corresponding to edges set to 255 and the 
-    others set to 0
+    A opencv image with the edges of the original image
 	"""
 
-	img = filtering(img, low_filtering, low_filter_type, low_filtering_kernel_size,
-					high_filtering, high_filter_type, high_filtering_kernel_size, high_filtering_strength)
 
 	gradientX = cv2.Scharr(img, cv2.CV_32F, 1, 0)/4.0
 	gradientY = cv2.Scharr(img, cv2.CV_32F, 0, 1)/4.0
@@ -266,13 +221,12 @@ def scharr_edge(img, threshold=64, low_filtering=True,
 
 	grad = cv2.addWeighted(absGradientX, 0.5, absGradientY, 0.5, 0)
 
-	return clean_grad(grad, False, threshold)
+	if thresholding:
+		grad = clean_grad(grad, False, threshold)
 
-def canny_edge(img, low_threshold=50, high_threshold=255, low_filtering=True,
-			   low_filter_type="uniform", low_filtering_kernel_size=5, 
-			   high_filtering=True, high_filter_type="gaussian", 
-			   high_filtering_kernel_size=5, high_filtering_strength=2,
-			   aperture_size=3):
+	return grad
+
+def canny_edge(img, low_threshold=50, high_threshold=255, aperture_size=3):
 	"""
 	Compute the edges of an image using the Canny method.
 
@@ -280,34 +234,16 @@ def canny_edge(img, low_threshold=50, high_threshold=255, low_filtering=True,
     ----------
     
     - img: 		   			   The image on which to apply the filter
-    - low_threshold: 		   The low threshold used in the Canny method
-    - high_threshold:		   The high threshold used in the Canny method
-    - low_filtering: 		   A boolean indicating whether to apply a low pass 
-    						   filter
-    - low_filter_type: 		   The type of low pass filtering to apply, can be 
-    						   either "uniform", "median" or "gaussian".
-    - low_filter_kernel_size:  The kernel size of the low pass filter
-    - high_filtering: 		   A boolean indicating whether to apply a high pass 
-    						   filter
-   	- high_filter_type: 	   The type of high pass filtering to apply, can be 
-   							   either "uniform", "median" or "gaussian".
-    - ligh_filter_kernel_size: The kernel size of the high pass filter
-    - high_filtering_strength: The strength of the high pass filter
     - aperture_size:		   The aperture size of the sobel operator		   
 
     Returns
     -------
-    A opencv image with the pixel corresponding to edges set to 255 and the 
-    others set to 0
+    A opencv image with the edges of the original image
 	"""
 	
-	img = filtering(img, low_filtering, low_filter_type, 
-					low_filtering_kernel_size, high_filtering, high_filter_type, 
-					high_filtering_kernel_size, high_filtering_strength)
-
 	return cv2.Canny(img, low_threshold, high_threshold, None, aperture_size)
 
-def stacking(img, threshold = 128):
+def stacking(img, thresholding = False, threshold = 128):
 	naiveGrad = naive_gradient(img)
 	sobel = sobel_edge(img)
 	scharr = scharr_edge(img)
@@ -315,16 +251,31 @@ def stacking(img, threshold = 128):
 	grad = cv2.addWeighted(naiveGrad, 1/3, sobel, 1/3, 0)
 	grad = cv2.addWeighted(grad, 1., scharr, 1/3, 0)
 
-	return clean_grad(grad, False, threshold)
+	if thresholding:
+		grad = clean_grad(grad, False, threshold)
 
-def beucher(img, low_filtering = True, low_filtering_kernel_size = 1, threshold = 60):
-	"""beucher gradient (non linéaire)"""
+	return grad
 
-	if low_filtering:
-		img_lp = cv2.GaussianBlur( img, ( low_filtering_kernel_size, low_filtering_kernel_size), 0)
+def beucher_edges(img, thresholding = True, threshold = 60):
+	"""
+	Compute the edges of an image using the Canny method.
+
+	Parameters
+    ----------
+    
+    - img: 		   			   The image on which to apply the filter
+	- thresholding:			   Boolean for wether or not a thresholing is applied to the edges
+    - aperture_size:		   The aperture size of the sobel operator		   
+
+    Returns
+    -------
+    A opencv image with the edges of the original image
+	"""
 
 	kernel = np.ones((3,3),np.uint8)
-	grad = cv2.morphologyEx(img_lp, cv2.MORPH_GRADIENT, kernel)
-	grad = clean_grad(grad, False, threshold)
+	grad = cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
+
+	if thresholding:
+		grad = clean_grad(grad, False, threshold)
 
 	return grad
