@@ -90,6 +90,7 @@ def update_edges(method="Sobel", image="building", low_filtering=True,
 
 def build_ui_edges():
     methodselect = widgets.Dropdown(options = ["Sobel", "Scharr", "Naive Gradient", "Beucher", "Canny", "Stacking"], value = "Sobel")
+    imageselect = widgets.Dropdown(options = ["building", "sudoku", "soccer", "road", "pcb"], value = "building")
     
 
     #Low Pass Filter Parameters
@@ -158,10 +159,11 @@ def build_ui_edges():
     accordion.set_title(3, 'Method Parameters')
 
 
-    ui = widgets.VBox([methodselect, accordion])
+    ui = widgets.VBox([methodselect, imageselect, accordion])
         
             
     out = widgets.interactive_output(update_edges, {'method': methodselect,
+                                                    'image': imageselect,
                                                     'low_filtering': lp_on, 
                                                     'low_filter_type': lp_type,
                                                     'low_filtering_kernel_size': lp_kernel,
