@@ -257,6 +257,8 @@ def canny_edge(img, low_threshold=50, high_threshold=255, aperture_size=3):
 	return cv2.Canny(img, low_threshold, high_threshold, None, aperture_size)
 
 def stacking(img, thresholding = False, threshold = 128):
+	"""
+	"""
 	naiveGrad = naive_gradient(img)
 	sobel = sobel_edge(img)
 	scharr = scharr_edge(img)
@@ -277,11 +279,13 @@ def beucher_edge(img, thresholding = True, threshold = 60):
     ----------
     
     - img: 		   			   The image on which to apply the filter
-	- thresholding:			   Boolean for wether or not a thresholing is applied to the edges
+	- thresholding:			   Boolean for wether or not a thresholing is 
+							   applied to the edges
     - aperture_size:		   The aperture size of the sobel operator		   
 
     Returns
     -------
+
     A opencv image with the edges of the original image
 	"""
 

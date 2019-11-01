@@ -26,15 +26,10 @@ def method_main(imageName, method):
 
 def threshold_main(imageName, method):
     img = load_gray_img(imageName)
-    grad_4 = method(img, threshold = 4)
-    grad_6 = method(img, threshold = 6)
-    grad_8 = method(img, threshold = 8)
-    grad_16 = method(img, threshold = 16)
-    grad_32 = method(img, threshold = 32)
-    grad_64 = method(img, threshold = 64)
-    grad_96 = method(img, threshold = 96)
-    grad_128 = method(img, threshold = 128)
-    imgList = (img, grad_4, grad_6, grad_8, grad_16, grad_32, grad_64, grad_96, grad_128)
+    filtered = filtering(img)
+    thresholds = [4, 6, 8, 16, 32, 64, 96, 128]
+    grads = [method(filtered, threshold = x) for x in thresholds]
+    imgList = [img] + grads
     grad = np.concatenate(imgList, axis = 1)
     display_img(grad, len(imgList), True)
 
