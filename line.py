@@ -5,9 +5,25 @@ import math
 
 def hough_determinist(edge_img, img_print, rho=1, theta=np.pi / 180,
                       threshold=300):
+    """
+    Returns the contours and draw them on the second argument
 
+    Parameters
+    ----------
+    - edge_img :        The image detecting the on which to detect the contour
+    - img_print :       Image on which to draw the contour
+    - rho :             Distance resolution of the accumulator in pixels.
+    - theta :           Angle resolution of the accumulator in radians.
+    - threshold :       Accumulator threshold parameter. Only those lines are
+                        returned that get enough votes
+
+    Return
+    ------
+    The contour of the image
+    """
     lines = cv2.HoughLines(edge_img, rho, theta, threshold)
 
+    # https://docs.opencv.org/3.4/d9/db0/tutorial_hough_lines.html
     for line in lines:
         for rho, theta in line:
             a = math.cos(theta)
@@ -23,7 +39,26 @@ def hough_determinist(edge_img, img_print, rho=1, theta=np.pi / 180,
 
 def hough_probabilist(edge_img, img_print, rho=1, theta=np.pi / 180,
                       threshold=50, minLineLength=30, maxLineGap=10):
+    """
+    Returns the contours and draw them on the second argument
 
+    Parameters
+    ----------
+    - edge_img :        The image detecting the on which to detect the contour
+    - img_print :       Image on which to draw the contour
+    - rho :             Distance resolution of the accumulator in pixels.
+    - theta :           Angle resolution of the accumulator in radians.
+    - threshold :       Accumulator threshold parameter. Only those lines are
+                        returned that get enough votes.
+    - minLineLength :   Minimum line length. Line segments shorter than that are
+                        rejected.
+    - maxLineGap :      Maximum allowed gap between points on the same line to
+                        link them.
+
+    Return
+    ------
+    The contour of the image
+    """
     lines = cv2.HoughLinesP(edge_img, rho, theta, threshold, minLineLength,
                             maxLineGap)
 
@@ -34,7 +69,21 @@ def hough_probabilist(edge_img, img_print, rho=1, theta=np.pi / 180,
 
 
 def contours(img, img_print, thresh=240, maxval=255):
+    """
+    Returns the contours and draw them on the second argument
 
+    Parameters
+    ----------
+
+    - img :       The image on which to detect the contour
+    - img_print : Image on which to draw the contour
+    - thresh :    Threshold of intensity in the image
+    - maxval :    Maximal value in the img
+
+    Return
+    ------
+    The contour of the image
+    """
     _, thresh = cv2.threshold(img, thresh, maxval, 0)
     contours, _ = cv2.findContours(thresh,
                                    cv2.RETR_TREE,
@@ -45,7 +94,7 @@ def contours(img, img_print, thresh=240, maxval=255):
     return contours
 
 
-def get_edges_on_lines(edges, img_w_lines, kernel_size = 3):
+def get_edges_on_lines(edges, img_w_lines, kernel_size=3):
     """
     Get the edges that belong to a line in an image
 
@@ -59,9 +108,7 @@ def get_edges_on_lines(edges, img_w_lines, kernel_size = 3):
     Return
     ------
     The image containing only the edges points on a line
-
     """
-
     final = np.zeros(edges.shape)
     kernel = np.ones((kernel_size, kernel_size))
     r = cv2.filter2D(img_w_lines, -1, kernel, borderType=cv2.BORDER_CONSTANT)
