@@ -105,6 +105,16 @@ def scharr_edge(img, saturate = True, threshold = 64, low_filtering = True, low_
 
 	return clean_grad(grad, saturate, threshold)
 
+def canny_edge(img, saturate = True, low_threshold = 50, high_threshold = 255, low_filtering = True,
+			   low_filter_type = "uniform", low_filtering_kernel_size = 5, high_filtering = True,
+			   high_filter_type = "gaussian", high_filtering_kernel_size= 5, high_filtering_strength = 2,
+			   aperture_size = 3):
+	
+	img = filtering(img, low_filtering, low_filter_type, low_filtering_kernel_size,
+					high_filtering, high_filter_type, high_filtering_kernel_size, high_filtering_strength)
+
+	return cv2.Canny(img, low_threshold, high_threshold, None, aperture_size)
+
 def stacking(img, saturate = True):
 	naiveGrad = naive_gradient(img)
 	sobel = sobel_edge(img)
