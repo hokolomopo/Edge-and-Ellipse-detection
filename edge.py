@@ -256,7 +256,7 @@ def stacking(img, thresholding = False, threshold = 128):
 
 	return grad
 
-def beucher_edges(img, thresholding = True, threshold = 60):
+def beucher_edge(img, thresholding = True, threshold = 60):
 	"""
 	Compute the edges of an image using the Canny method.
 
