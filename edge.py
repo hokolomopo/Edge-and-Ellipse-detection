@@ -259,22 +259,23 @@ def stacking(img, thresholding = False, threshold = 128):
 
 	return grad
 
-def beucher_edge(img, thresholding=True, threshold=60):
+def beucher_edge(img, thresholding=True, threshold=60, kernel_size = 3):
 	"""
-	Compute the edges of an image using the Canny method.
+	Compute the edges of an image using the Beucher Gradient method.
 
 	Parameters
     ----------
     - img: 			 The image on which to apply the filter
 	- thresholding:	 Boolean for wether or not a thresholing is applied to the 
 					 edges
-    - aperture_size: The aperture size of the sobel operator
+    - threshold: 	The threshold to apply if thresholding is set to True.
 
     Returns
     -------
     A opencv image with the edges of the original image
 	"""
-	kernel = np.ones((3,3),np.uint8)
+
+	kernel = np.ones((kernel_size,kernel_size),np.uint8)
 	grad = cv2.morphologyEx(img, cv2.MORPH_GRADIENT, kernel)
 
 	if thresholding:
