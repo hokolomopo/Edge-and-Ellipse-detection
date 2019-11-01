@@ -39,10 +39,6 @@ def update_edges(method="sobel", image="building", low_filtering = True, low_fil
     elif method == "beucher":
         grad = beucher_edge(img_threshold, thresholding = True, threshold = edge_threshold)
 
-    elif method == "canny":
-        grad = beucher_edge(img_threshold, thresholding = True, threshold = edge_threshold)
-
-
     tools.multiPlot(1, 4, 
             (img, img_filtered, img_threshold, grad),
             ('Original Image', 'Filtered Image', 'Thresholded Image', 'Edges'),
