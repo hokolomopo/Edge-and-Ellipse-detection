@@ -57,7 +57,7 @@ def low_pass_filter(img, kernel_size, filter_type):
     The low-pass filtered image
 	"""
 	if filter_type == "uniform":
-		ka = np.ones((kernel_size, kernel_size), dtype=float) / 80
+		ka = np.ones((kernel_size, kernel_size), dtype=float) / kernel_size**2
 		lowPass = cv2.filter2D(img, -1, ka, borderType=cv2.BORDER_CONSTANT)
 	if filter_type == "median":
 		lowPass = cv2.medianBlur(img, kernel_size)
@@ -131,11 +131,11 @@ def sobel_edge(img, thresholding=True, threshold=15, kernel_size=1):
 
 	Parameters
     ----------
-    - img: 		   			   The image on which to apply the filter
-	- thresholding:			   Boolean for wether or not a thresholing is applied to the edges
-    - threshold: 			   The threshold at which to consider a pixel as an
-    						   edge
-    - kernel_size:			   The size of the sobel kernel.
+    - img:		    The image on which to apply the filter
+	- thresholding: Boolean for wether or not a thresholing is applied to the 
+					edges
+    - threshold:	The threshold at which to consider a pixel as an edge
+    - kernel_size:  The size of the sobel kernel.
 
     Returns
     -------
@@ -161,10 +161,10 @@ def naive_gradient(img, thresholding=True, threshold=16):
 
 	Parameters
     ----------
-    - img: 		   			   The image on which to apply the filter
-	- thresholding:			   Boolean for wether or not a thresholing is applied to the edges
-    - threshold: 			   The threshold at which to consider a pixel as an
-    						   edge
+    - img: 		  	The image on which to apply the filter
+	- thresholding: Boolean for wether or not a thresholing is applied to the 
+					edges
+    - threshold: 	The threshold at which to consider a pixel as an edge
 
     Returns
     -------
@@ -193,10 +193,11 @@ def scharr_edge(img, thresholding = True, threshold=64):
 
 	Parameters
     ----------
-    - img: 		   			   The image on which to apply the filter
-	- thresholding:			   Boolean for wether or not a thresholing is applied to the edges
-    - threshold: 			   The threshold at which to consider a pixel as an
-    						   edge
+    - img: 		 	The image on which to apply the filter
+	- thresholding: Boolean for wether or not a thresholing is applied to the 
+					edges
+    - threshold:    The threshold at which to consider a pixel as an edge
+
     Returns
     -------
     A opencv image with the pixel corresponding to edges set to 255 and the
@@ -221,9 +222,8 @@ def canny_edge(img, low_threshold=50, high_threshold=255, aperture_size=3):
 
 	Parameters
     ----------
-
-    - img: 		   			   The image on which to apply the filter
-    - aperture_size:		   The aperture size of the sobel operator
+    - img: 			 The image on which to apply the filter
+    - aperture_size: The aperture size of the sobel operator
 
     Returns
     -------
@@ -234,6 +234,18 @@ def canny_edge(img, low_threshold=50, high_threshold=255, aperture_size=3):
 
 def stacking(img, thresholding = False, threshold = 128):
 	"""
+	Compute the edges of an image stacking all the existing methods. A pixel
+	is classified as an edge if enough methods have classified it as an edge
+
+	Parameters
+    ----------
+    - thresholding: A boolean indicating whether to perform thresholding or not.
+    - threshold: 	The threshold to apply if thresholding is set to True.
+
+    Returns
+    -------
+    A opencv image with the pixel corresponding to edges set to 255 and the
+    others set to 0
 	"""
 	naiveGrad = naive_gradient(img)
 	sobel = sobel_edge(img)
@@ -247,16 +259,16 @@ def stacking(img, thresholding = False, threshold = 128):
 
 	return grad
 
-def beucher_edge(img, thresholding = True, threshold = 60):
+def beucher_edge(img, thresholding=True, threshold=60):
 	"""
 	Compute the edges of an image using the Canny method.
 
 	Parameters
     ----------
-    - img: 		   			   The image on which to apply the filter
-	- thresholding:			   Boolean for wether or not a thresholing is
-							   applied to the edges
-    - aperture_size:		   The aperture size of the sobel operator
+    - img: 			 The image on which to apply the filter
+	- thresholding:	 Boolean for wether or not a thresholing is applied to the 
+					 edges
+    - aperture_size: The aperture size of the sobel operator
 
     Returns
     -------
