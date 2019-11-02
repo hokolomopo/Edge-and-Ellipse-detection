@@ -54,6 +54,10 @@ def update_edges(method="Sobel", image="building", low_filtering=True,
                  low_threshold=50, high_threshold=255, aperture_size=3,
                  kernel_size=3, edge_threshold_on = True):
     
+    if method == "Stacking":
+        update_stacking(image, thresholding = edge_threshold_on, threshold = edge_threshold)
+        return
+
     img = load_gray_img("img/{}.png".format(image))
 
     img_filtered = filtering(img, low_filtering, low_filter_type, low_filtering_kernel_size,
@@ -87,6 +91,18 @@ def update_edges(method="Sobel", image="building", low_filtering=True,
             ('Original Image', 'Filtered Image', 'Thresholded Image', 'Edges'),
             cmap_tuple=(cm.gray, cm.gray, cm.gray, cm.gray, cm.gray, cm.gray))
 
+def update_stacking(image, thresholding, threshold):
+    grads = [get_optimal_grads(image, "Sobel"),
+             get_optimal_grads(image, "Naive Gradient"),
+             get_optimal_grads(image, "Scharr"),
+             get_optimal_grads(image, "Beucher")]
+
+    grad = stacking(grads, thresholding=thresholding, threshold=threshold)
+
+    tools.multiPlot(1, 2,
+            (img, grad),
+            ('Original Image', 'Edges'),
+            cmap_tuple=(cm.gray, cm.gray, cm.gray, cm.gray, cm.gray, cm.gray))
 
 def build_ui_edges():
     methodselect = widgets.Dropdown(options = ["Sobel", "Scharr", "Naive Gradient", "Beucher", "Canny", "Stacking"], value = "Sobel")
@@ -127,14 +143,14 @@ def build_ui_edges():
 
     #Methods Parameters
     edge_th_on = widgets.ToggleButton(value=True, description = "Apply Thresholding to Edges")
-    edge_th_str = widgets.IntSlider(value = 30, min = 1, max = 100, step = 1, continuous_update=False)
+    edge_th_str = widgets.IntSlider(value = 30, min = 1, max = 255, step = 1, continuous_update=False)
     edge_th_str_box = widgets.HBox([widgets.Label(value="Threshold"), edge_th_str])
     edge_kernel = widgets.IntSlider(value = 3, min = 1, max = 9, step = 2, continuous_update=False)
     edge_kernel_box = widgets.HBox([widgets.Label(value="Kernel Size"), edge_kernel])
 
-    edge_low_th = widgets.IntSlider(value = 30, min = 1, max = 100, step = 1, continuous_update=False)
+    edge_low_th = widgets.IntSlider(value = 30, min = 1, max = 255, step = 1, continuous_update=False)
     edge_low_th_box = widgets.HBox([widgets.Label(value="Low Threshold"), edge_low_th])
-    edge_high_th = widgets.IntSlider(value = 70, min = 1, max = 150, step = 1, continuous_update=False)
+    edge_high_th = widgets.IntSlider(value = 70, min = 1, max = 255, step = 1, continuous_update=False)
     edge_high_th_box = widgets.HBox([widgets.Label(value="High Threshold"), edge_high_th])
     edge_aperture_size = widgets.IntSlider(value = 3, min = 1, max = 9, step = 2, continuous_update=False)
     edge_aperture_size_box = widgets.HBox([widgets.Label(value="Aperture Size"), edge_aperture_size])
