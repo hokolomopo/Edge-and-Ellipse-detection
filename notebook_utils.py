@@ -92,6 +92,8 @@ def update_edges(method="Sobel", image="building", low_filtering=True,
             cmap_tuple=(cm.gray, cm.gray, cm.gray, cm.gray, cm.gray, cm.gray))
 
 def update_stacking(image, thresholding, threshold):
+    img = load_gray_img("img/{}.png".format(image))
+
     grads = [get_optimal_grads(image, "Sobel"),
              get_optimal_grads(image, "Naive Gradient"),
              get_optimal_grads(image, "Scharr"),
@@ -108,7 +110,6 @@ def build_ui_edges():
     methodselect = widgets.Dropdown(options = ["Sobel", "Scharr", "Naive Gradient", "Beucher", "Canny", "Stacking"], value = "Sobel")
     imageselect = widgets.Dropdown(options = ["building", "sudoku", "soccer", "road", "pcb"], value = "building")
     
-
     #Low Pass Filter Parameters
     lp_on = widgets.ToggleButton(value=False, description = "Apply Low-Pass filter")
     lp_type = widgets.Dropdown(options = ["uniform", "median", "gaussian"], value = "gaussian")
