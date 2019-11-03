@@ -135,11 +135,12 @@ def get_edges_on_lines(edges, img_w_lines, kernel_size=3):
 
     Return
     ------
-    The image containing only the edges points on a line
+    The image containing only the edges points on a line and the convoluted image
     """
     final = np.zeros(edges.shape)
     kernel = np.ones((kernel_size, kernel_size))
     r = cv2.filter2D(img_w_lines, -1, kernel, borderType=cv2.BORDER_CONSTANT)
+    r = np.where(r > 0, 255.0, 0)
 
     for i in range(edges.shape[0]):
         for j in range(edges.shape[1]):
@@ -150,4 +151,32 @@ def get_edges_on_lines(edges, img_w_lines, kernel_size=3):
             else:
                 final[i][j] = 0
 
-    return final
+    return (final, r)
+
+
+def get_optimal_lines(imageName, edges, print_img, lines_method):
+    """
+    Get the lines in the image with the tuned parameters for Hough
+
+    Parameters
+    ----------
+    - img :         The image on which to get the lines
+    - edges :       Extracted edges of the image
+    - print_img :   Image on which to print the lines
+    - lines_method :Method to extract the lines (Hough or HoughProba)
+
+
+    Return
+    ------
+    The lines of the images
+    """
+
+    if lines_method == "Hough":
+        if imageName == "sudoku":
+            lines = hough_determinist(edges, print_img, 1, 0.015, 240)
+        else:
+            lines = hough_determinist(edges, print_img, 1, 0.015, 360)
+    elif lines_method == "HoughProba":
+        lines = hough_probabilist(edges, print_img, 1, 0.015, 50, 30, 5)
+
+    return lines
