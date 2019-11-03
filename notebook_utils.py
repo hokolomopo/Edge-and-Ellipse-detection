@@ -216,3 +216,29 @@ def build_ui_edges(default_method = "Sobel"):
                                                 })
 
     return (ui, out)
+
+# def update_lines(image, method, line_method)
+#     img = load_gray_img(image)
+
+#     edges = get_optimal_grads(image, method)
+
+#     # Apply Hough method
+#     if(line_method == "Hough")
+#         lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold=50, minLineLength=30, maxLineGap=10)
+#     else:
+#         lines = hough_probabilist(edge_img_0, img, 1, 0.015, 50, 30, 5)
+
+#     # Draw image wiht lines foud with Hough
+#     img_w_lines = np.zeros(edges.shape)
+#     if lines is not None:
+#         for line in lines:
+#             x1, y1, x2, y2 = line[0]
+#             cv2.line(img_w_lines, (x1, y1), (x2, y2), (255, 0, 0), 1)  
+
+
+#     final = get_edges_on_lines(edges, img_w_lines)
+
+#     tools.multiPlot(1, 4, 
+#             (img, edges, final, edges-final),
+#             ('Edges', 'Lines detected', 'Only Edges on Lines', 'Only Edges not on Lines'),
+#             cmap_tuple=(cm.gray, cm.gray, cm.gray, cm.gray))
