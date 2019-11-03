@@ -286,35 +286,30 @@ def beucher_edge(img, thresholding=True, threshold=60, kernel_size = 3):
     return grad
 
 
-def get_edges_on_lines(edges, img_w_lines, kernel_size=3):
+def contours(img, img_print, thresh=240, maxval=255):
     """
-    Get the edges that belong to a line in an image
+    Returns the contours and draw them on the second argument
 
     Parameters
     ----------
 
-    - edges :           The edges of the image
-    - img_w_lines :     Image with all the lines drawed
-    - kernel_size :     Size of the kernel to determine if a point of an edge is on a line
+    - img :       The image on which to detect the contour
+    - img_print : Image on which to draw the contour
+    - thresh :    Threshold of intensity in the image
+    - maxval :    Maximal value in the img
 
     Return
     ------
-    The image containing only the edges points on a line
+    The contour of the image
     """
-    final = np.zeros(edges.shape)
-    kernel = np.ones((kernel_size, kernel_size))
-    r = cv2.filter2D(img_w_lines, -1, kernel, borderType=cv2.BORDER_CONSTANT)
+    _, thresh = cv2.threshold(img, thresh, maxval, 0)
+    contours, _ = cv2.findContours(thresh,
+                                   cv2.RETR_TREE,
+                                   cv2.CHAIN_APPROX_NONE)
 
-    for i in range(edges.shape[0]):
-        for j in range(edges.shape[1]):
-            if(edges[i][j] == 0):
-                continue
-            if(r[i][j] > 0):
-                final[i][j] = 255
-            else:
-                final[i][j] = 0
+    cv2.drawContours(img_print, contours, -1, (255, 0, 0), 1)
 
-    return final
+    return contours
 
 
 def get_optimal_grads(image, method):
