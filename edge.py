@@ -303,8 +303,8 @@ def contours(img, img_print, thresh=240, maxval=255, color=(255, 0, 0)):
     ------
     The contour of the image
     """
-    _, thresh = cv2.threshold(img, thresh, maxval, 0)
-    contours, _ = cv2.findContours(thresh,
+    _, thr = cv2.threshold(img, thresh, maxval, 0)
+    contours, _ = cv2.findContours(thr,
                                    cv2.RETR_TREE,
                                    cv2.CHAIN_APPROX_NONE)
 
@@ -403,6 +403,9 @@ def get_optimal_grads(image, method):
 
             grad = stacking(grads, thresholding=True, threshold=129)
 
+        elif method == "Following":
+            grad = following_edge(img, thresh=240, maxval=255)
+
     elif image == "sudoku":
         if method == "Sobel":
             filtered = filtering(img, low_filtering=True,
@@ -485,6 +488,9 @@ def get_optimal_grads(image, method):
 
             grad = stacking(grads, thresholding=True, threshold=103)
 
+        elif method == "Following":
+            grad = following_edge(img, thresh=45, maxval=255)
+
     else:
         filtered = filtering(img)
 
@@ -510,5 +516,8 @@ def get_optimal_grads(image, method):
                      get_optimal_grads(image, "Beucher")]
 
             grad = stacking(grads)
+
+        elif method == "Following":
+            grad = following_edge(img)
 
     return grad
