@@ -91,6 +91,9 @@ def update_edges(method="Sobel", image="building", low_filtering=True,
     elif method == "Following":
         grad = following_edge(img_threshold, thresh = low_threshold_fol, maxval = high_threshold_fol)
 
+    elif method == "Laplacian":
+        grad = laplacian_edge(img_threshold, thresholding = edge_threshold_on, threshold = edge_threshold, kernel_size = kernel_size)
+
     tools.multiPlot(1, 4,
             (img, img_filtered, img_threshold, grad),
             ('Original Image', 'Filtered Image', 'Thresholded Image', 'Edges'),
@@ -112,7 +115,7 @@ def update_stacking(image, thresholding, threshold):
             cmap_tuple=(cm.gray, cm.gray, cm.gray, cm.gray, cm.gray, cm.gray))
 
 def build_ui_edges(default_method = "Sobel"):
-    methodselect = widgets.Dropdown(options = ["Sobel", "Scharr", "Naive Gradient", "Beucher", "Canny", "Stacking", "Following"], value = default_method)
+    methodselect = widgets.Dropdown(options = ["Sobel", "Scharr", "Naive Gradient", "Beucher", "Canny", "Stacking", "Following", "Laplacian"], value = default_method)
     imageselect = widgets.Dropdown(options = ["building", "sudoku", "soccer", "road", "pcb"], value = "building")
 
     #Low Pass Filter Parameters
@@ -172,9 +175,10 @@ def build_ui_edges(default_method = "Sobel"):
     stacking_box = widgets.VBox([edge_th_on, edge_th_str_box])
     canny_box = widgets.VBox([edge_low_th_box, edge_high_th_box, edge_aperture_size_box])
     following_box = widgets.VBox([edge_low_th_fol_box, edge_high_th_fol_box])
+    laplacian_box = widgets.VBox([edge_th_on, edge_th_str_box, edge_kernel_box])
 
-    tabnames = ['Sobel', 'Scharr', 'Naive Gradient', 'Beucher', 'Stacking', 'Canny', 'Following']
-    tabs = widgets.Tab(children = [sobel_box, scharr_box, naive_box, beucher_box, stacking_box, canny_box, following_box])
+    tabnames = ['Sobel', 'Scharr', 'Naive Gradient', 'Beucher', 'Stacking', 'Canny', 'Following', 'Laplacian']
+    tabs = widgets.Tab(children = [sobel_box, scharr_box, naive_box, beucher_box, stacking_box, canny_box, following_box, laplacian_box])
     for i in range(len(tabnames)):
         tabs.set_title(i, tabnames[i])
 

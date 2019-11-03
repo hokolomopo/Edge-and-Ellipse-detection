@@ -156,6 +156,31 @@ def sobel_edge(img, thresholding=True, threshold=15, kernel_size=1):
 
     return grad
 
+def laplacian_edge(img, thresholding=True, threshold=15, kernel_size=3):
+    """
+    Compute the edges of an image using the laplacian method
+
+    Parameters
+    ----------
+    - img:          The image on which to apply the filter
+    - thresholding: Boolean for wether or not a thresholing is applied to the
+                    edges
+    - threshold:    The threshold at which to consider a pixel as an edge
+    - kernel_size:  The size of the laplacian kernel.
+
+    Returns
+    -------
+    A opencv image with the pixel corresponding to edges set to 255 and the
+    others set to 0
+    """
+
+    laplacian = cv2.Laplacian(img, cv2.CV_32F, ksize=kernel_size)
+
+    if thresholding:
+        laplacian = clean_grad(laplacian, False, threshold)
+
+    return laplacian
+
 def naive_gradient(img, thresholding=True, threshold=16):
     """
     Compute the edges of an image computing gradients of the image.
