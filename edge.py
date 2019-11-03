@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import tools
 from image import *
+from copy import deepcopy
 
 def saturate_cast_uint8(img):
     """
@@ -187,7 +188,7 @@ def naive_gradient(img, thresholding=True, threshold=16):
 
     return grad
 
-def scharr_edge(img, thresholding = True, threshold=64):
+def scharr_edge(img, thresholding=True, threshold=64):
     """
     Compute the edges of an image using the Scharr method.
 
@@ -286,17 +287,17 @@ def beucher_edge(img, thresholding=True, threshold=60, kernel_size = 3):
     return grad
 
 
-def contours(img, img_print, thresh=240, maxval=255):
+def contours(img, img_print, thresh=240, maxval=255, color=(255, 0, 0)):
     """
     Returns the contours and draw them on the second argument
 
     Parameters
     ----------
-
     - img :       The image on which to detect the contour
     - img_print : Image on which to draw the contour
     - thresh :    Threshold of intensity in the image
     - maxval :    Maximal value in the img
+    - color :     (r, g, b) color triplet
 
     Return
     ------
@@ -307,9 +308,29 @@ def contours(img, img_print, thresh=240, maxval=255):
                                    cv2.RETR_TREE,
                                    cv2.CHAIN_APPROX_NONE)
 
-    cv2.drawContours(img_print, contours, -1, (255, 0, 0), 1)
+    if img_print is not None:
+        cv2.drawContours(img_print, contours, -1, color, 1)
 
     return contours
+
+
+def following_edge(img, thresh=240, maxval=255):
+    """
+    Compute the edges of an image based on a contopur following algorithm
+
+    Parameters
+    ----------
+    - img :       The image on which to detect the contour
+    - thresh :    Threshold of intensity in the image
+    - maxval :    Maximal value in the img
+
+    Return
+    ------
+    A opencv image with the edges of the original image
+    """
+    black_img = deepcopy(img) * 0
+    contours(img, black_img, thresh, maxval, (255, 255, 255))
+    return black_img
 
 
 def get_optimal_grads(image, method):
