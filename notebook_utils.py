@@ -24,27 +24,28 @@ def update_method(method="Sobel"):
     }
 
     if method == "Sobel":
-        interact((lambda **x: update_edges(method = "Sobel", **x)), 
+        interact((lambda **x: update_edges(method = "Sobel", **x)),
                   **dict(kwargs, **{"edge_threshold": (0, 100, 10),
                                     "kernel_size": (1, 7, 2)}))
 
     elif method == "canny":
-        interact((lambda **x: update_edges(method = "Sobel", **x)), 
-                  **dict(kwargs, **{"low_threshold": (0, 100, 10), 
-                                    "high_threshold": (200, 250, 10), 
+        interact((lambda **x: update_edges(method = "Sobel", **x)),
+                  **dict(kwargs, **{"low_threshold": (0, 100, 10),
+                                    "high_threshold": (200, 250, 10),
                                     "aperture_size": (1, 11, 2)}))
 
     elif method == "naive_gradient":
-        interact((lambda **x: update_edges(method = "Sobel", **x)), 
+        interact((lambda **x: update_edges(method = "Sobel", **x)),
                   **dict(kwargs, **{"edge_threshold": (0, 100, 10)}))
 
     elif method == "scharr":
-        interact((lambda **x: update_edges(method = "Sobel", **x)), 
+        interact((lambda **x: update_edges(method = "Sobel", **x)),
                   **dict(kwargs, **{"edge_threshold": (0, 100, 10)}))
 
     elif method == "beucher":
-        interact((lambda **x: update_edges(method = "Sobel", **x)), 
+        interact((lambda **x: update_edges(method = "Sobel", **x)),
                   **dict(kwargs, **{"edge_threshold": (0, 100, 10)}))
+
 
 def update_edges(method="Sobel", image="building", low_filtering=True,
                  low_filter_type="gaussian", low_filtering_kernel_size=5,
@@ -52,8 +53,9 @@ def update_edges(method="Sobel", image="building", low_filtering=True,
                  high_filtering_kernel_size=3, strength=2.0, threshold=True,
                  block_size=11, constant=3, edge_threshold=30,
                  low_threshold=50, high_threshold=255, aperture_size=3,
-                 kernel_size=3, edge_threshold_on = True):
-    
+                 kernel_size=3, edge_threshold_on=True,
+                 low_threshold_fol=240, high_threshold_fol=255):
+
     if method == "Stacking":
         update_stacking(image, thresholding = edge_threshold_on, threshold = edge_threshold)
         return
@@ -70,7 +72,7 @@ def update_edges(method="Sobel", image="building", low_filtering=True,
 
     if method == "Sobel":
         grad = sobel_edge(img_threshold, thresholding = edge_threshold_on, threshold = edge_threshold, kernel_size = kernel_size)
-    
+
     elif method == "Naive Gradient":
         grad = naive_gradient(img_threshold, thresholding = edge_threshold_on, threshold = edge_threshold)
 
@@ -85,6 +87,9 @@ def update_edges(method="Sobel", image="building", low_filtering=True,
 
     elif method == "Canny":
         grad = canny_edge(img, low_threshold = low_threshold, high_threshold = high_threshold, aperture_size = aperture_size)
+
+    elif method == "Following":
+        grad = following_edge(img, thresh = low_threshold_fol, maxval = high_threshold_fol)
 
     tools.multiPlot(1, 4,
             (img, img_filtered, img_threshold, grad),
@@ -106,10 +111,10 @@ def update_stacking(image, thresholding, threshold):
             ('Original Image', 'Edges'),
             cmap_tuple=(cm.gray, cm.gray, cm.gray, cm.gray, cm.gray, cm.gray))
 
-def build_ui_edges():
-    methodselect = widgets.Dropdown(options = ["Sobel", "Scharr", "Naive Gradient", "Beucher", "Canny", "Stacking"], value = "Sobel")
+def build_ui_edges(default_method = "Sobel"):
+    methodselect = widgets.Dropdown(options = ["Sobel", "Scharr", "Naive Gradient", "Beucher", "Canny", "Stacking", "Following"], value = default_method)
     imageselect = widgets.Dropdown(options = ["building", "sudoku", "soccer", "road", "pcb"], value = "building")
-    
+
     #Low Pass Filter Parameters
     lp_on = widgets.ToggleButton(value=False, description = "Apply Low-Pass filter")
     lp_type = widgets.Dropdown(options = ["uniform", "median", "gaussian"], value = "gaussian")
@@ -151,8 +156,12 @@ def build_ui_edges():
 
     edge_low_th = widgets.IntSlider(value = 30, min = 1, max = 255, step = 1, continuous_update=False)
     edge_low_th_box = widgets.HBox([widgets.Label(value="Low Threshold"), edge_low_th])
+    edge_low_fol_th = widgets.IntSlider(value = 240, min = 1, max = 255, step = 1, continuous_update=False)
+    edge_low_th_fol_box = widgets.HBox([widgets.Label(value="Low Threshold"), edge_low_fol_th])
     edge_high_th = widgets.IntSlider(value = 70, min = 1, max = 255, step = 1, continuous_update=False)
     edge_high_th_box = widgets.HBox([widgets.Label(value="High Threshold"), edge_high_th])
+    edge_high_fol_th = widgets.IntSlider(value = 255, min = 1, max = 255, step = 1, continuous_update=False)
+    edge_high_th_fol_box = widgets.HBox([widgets.Label(value="High Threshold"), edge_high_fol_th])
     edge_aperture_size = widgets.IntSlider(value = 3, min = 1, max = 9, step = 2, continuous_update=False)
     edge_aperture_size_box = widgets.HBox([widgets.Label(value="Aperture Size"), edge_aperture_size])
 
@@ -162,13 +171,14 @@ def build_ui_edges():
     scharr_box = widgets.VBox([edge_th_on, edge_th_str_box])
     stacking_box = widgets.VBox([edge_th_on, edge_th_str_box])
     canny_box = widgets.VBox([edge_low_th_box, edge_high_th_box, edge_aperture_size_box])
+    following_box = widgets.VBox([edge_low_th_fol_box, edge_high_th_fol_box])
 
-    tabnames = ['Sobel', 'Scharr', 'Naive Gradient', 'Beucher', 'Stacking', 'Canny']
-    tabs = widgets.Tab(children = [sobel_box, scharr_box, naive_box, beucher_box, stacking_box, canny_box])
+    tabnames = ['Sobel', 'Scharr', 'Naive Gradient', 'Beucher', 'Stacking', 'Canny', 'Following']
+    tabs = widgets.Tab(children = [sobel_box, scharr_box, naive_box, beucher_box, stacking_box, canny_box, following_box])
     for i in range(len(tabnames)):
         tabs.set_title(i, tabnames[i])
 
-        
+
     accordion = widgets.Accordion(children=[lp_box, hp_box, th_box, tabs])
     accordion.set_title(0, 'Low Pass Filter')
     accordion.set_title(1, 'High Pass Filter')
@@ -177,11 +187,11 @@ def build_ui_edges():
 
 
     ui = widgets.VBox([methodselect, imageselect, accordion])
-        
-            
+
+
     out = widgets.interactive_output(update_edges, {'method': methodselect,
                                                     'image': imageselect,
-                                                    'low_filtering': lp_on, 
+                                                    'low_filtering': lp_on,
                                                     'low_filter_type': lp_type,
                                                     'low_filtering_kernel_size': lp_kernel,
                                                     'high_filtering': hp_on,
@@ -196,7 +206,9 @@ def build_ui_edges():
                                                     'low_threshold': edge_low_th,
                                                     'high_threshold': edge_high_th,
                                                     'aperture_size': edge_aperture_size,
-                                                    'kernel_size': edge_kernel
+                                                    'kernel_size': edge_kernel,
+                                                    'low_threshold_fol' : edge_low_fol_th,
+                                                    'high_threshold_fol' : edge_high_fol_th,
                                                 })
 
     return (ui, out)
