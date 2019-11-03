@@ -86,10 +86,10 @@ def update_edges(method="Sobel", image="building", low_filtering=True,
         grad = beucher_edge(img_threshold, thresholding = edge_threshold_on, threshold = edge_threshold, kernel_size = kernel_size)
 
     elif method == "Canny":
-        grad = canny_edge(img, low_threshold = low_threshold, high_threshold = high_threshold, aperture_size = aperture_size)
+        grad = canny_edge(img_threshold, low_threshold = low_threshold, high_threshold = high_threshold, aperture_size = aperture_size)
 
     elif method == "Following":
-        grad = following_edge(img, thresh = low_threshold_fol, maxval = high_threshold_fol)
+        grad = following_edge(img_threshold, thresh = low_threshold_fol, maxval = high_threshold_fol)
 
     tools.multiPlot(1, 4,
             (img, img_filtered, img_threshold, grad),
