@@ -132,7 +132,7 @@ def sobel_edge(img, thresholding=True, threshold=15, kernel_size=1):
     Parameters
     ----------
     - img:          The image on which to apply the filter
-    - thresholding: Boolean for wether or not a thresholing is applied to the 
+    - thresholding: Boolean for wether or not a thresholing is applied to the
                     edges
     - threshold:    The threshold at which to consider a pixel as an edge
     - kernel_size:  The size of the sobel kernel.
@@ -162,7 +162,7 @@ def naive_gradient(img, thresholding=True, threshold=16):
     Parameters
     ----------
     - img:          The image on which to apply the filter
-    - thresholding: Boolean for wether or not a thresholing is applied to the 
+    - thresholding: Boolean for wether or not a thresholing is applied to the
                     edges
     - threshold:    The threshold at which to consider a pixel as an edge
 
@@ -194,7 +194,7 @@ def scharr_edge(img, thresholding = True, threshold=64):
     Parameters
     ----------
     - img:          The image on which to apply the filter
-    - thresholding: Boolean for wether or not a thresholing is applied to the 
+    - thresholding: Boolean for wether or not a thresholing is applied to the
                     edges
     - threshold:    The threshold at which to consider a pixel as an edge
 
@@ -268,7 +268,7 @@ def beucher_edge(img, thresholding=True, threshold=60, kernel_size = 3):
     Parameters
     ----------
     - img:           The image on which to apply the filter
-    - thresholding:  Boolean for wether or not a thresholing is applied to the 
+    - thresholding:  Boolean for wether or not a thresholing is applied to the
                      edges
     - threshold:    The threshold to apply if thresholding is set to True.
 
@@ -286,65 +286,96 @@ def beucher_edge(img, thresholding=True, threshold=60, kernel_size = 3):
     return grad
 
 
+def get_edges_on_lines(edges, img_w_lines, kernel_size=3):
+    """
+    Get the edges that belong to a line in an image
+
+    Parameters
+    ----------
+
+    - edges :           The edges of the image
+    - img_w_lines :     Image with all the lines drawed
+    - kernel_size :     Size of the kernel to determine if a point of an edge is on a line
+
+    Return
+    ------
+    The image containing only the edges points on a line
+    """
+    final = np.zeros(edges.shape)
+    kernel = np.ones((kernel_size, kernel_size))
+    r = cv2.filter2D(img_w_lines, -1, kernel, borderType=cv2.BORDER_CONSTANT)
+
+    for i in range(edges.shape[0]):
+        for j in range(edges.shape[1]):
+            if(edges[i][j] == 0):
+                continue
+            if(r[i][j] > 0):
+                final[i][j] = 255
+            else:
+                final[i][j] = 0
+
+    return final
+
+
 def get_optimal_grads(image, method):
     img = load_gray_img("img/{}.png".format(image))
 
     if image == "building":
         if method == "Sobel":
-            filtered = filtering(img, low_filtering=True, 
-                                 low_filter_type="uniform", 
-                                 low_filtering_kernel_size=7, 
-                                 high_filtering=True, 
-                                 high_filter_type="gaussian", 
-                                 high_filtering_kernel_size=3, 
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=7,
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=3,
                                  high_filtering_strength=1.5)
 
-            grad = sobel_edge(filtered, thresholding=True, threshold=30, 
+            grad = sobel_edge(filtered, thresholding=True, threshold=30,
                               kernel_size=5)
 
         elif method == "Naive Gradient":
-            filtered = filtering(img, low_filtering=True, 
-                                 low_filter_type="uniform", 
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
                                  low_filtering_kernel_size=9,
-                                 high_filtering=True, 
-                                 high_filter_type="gaussian", 
-                                 high_filtering_kernel_size=5, 
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=5,
                                  high_filtering_strength=2.)
-        
+
             grad = naive_gradient(filtered, thresholding=True, threshold=10)
 
         elif method == "Scharr":
-            filtered = filtering(img, low_filtering=True, 
-                                 low_filter_type="uniform", 
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
                                  low_filtering_kernel_size=7,
-                                 high_filtering=True, 
-                                 high_filter_type="gaussian", 
-                                 high_filtering_kernel_size=3, 
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=3,
                                  high_filtering_strength=2.)
-        
+
             grad = scharr_edge(filtered, thresholding=True, threshold=50)
 
         elif method == "Beucher":
-            filtered = filtering(img, low_filtering=True, 
-                                 low_filter_type="uniform", 
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
                                  low_filtering_kernel_size=7,
-                                 high_filtering=True, 
-                                 high_filter_type="gaussian", 
-                                 high_filtering_kernel_size=3, 
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=3,
                                  high_filtering_strength=2.)
-        
+
             grad = beucher_edge(filtered, thresholding=True, threshold=23,
                                 kernel_size=3)
 
         elif method == "Canny":
-            filtered = filtering(img, low_filtering=True, 
-                                 low_filter_type="uniform", 
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
                                  low_filtering_kernel_size=7,
-                                 high_filtering=True, 
-                                 high_filter_type="gaussian", 
-                                 high_filtering_kernel_size=3, 
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=3,
                                  high_filtering_strength=2.)
-        
+
             grad = canny_edge(filtered, low_threshold=230,
                                high_threshold=255, aperture_size=3)
 
@@ -358,75 +389,75 @@ def get_optimal_grads(image, method):
 
     elif image == "sudoku":
         if method == "Sobel":
-            filtered = filtering(img, low_filtering=True, 
-                                 low_filter_type="uniform", 
-                                 low_filtering_kernel_size=3, 
-                                 high_filtering=True, 
-                                 high_filter_type="gaussian", 
-                                 high_filtering_kernel_size=3, 
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=3,
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=3,
                                  high_filtering_strength=2.)
 
-            grad = sobel_edge(filtered, thresholding=True, threshold=20, 
+            grad = sobel_edge(filtered, thresholding=True, threshold=20,
                               kernel_size=5)
 
         elif method == "Naive Gradient":
-            filtered = filtering(img, low_filtering=True, 
-                                 low_filter_type="uniform", 
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
                                  low_filtering_kernel_size=3,
-                                 high_filtering=True, 
-                                 high_filter_type="gaussian", 
-                                 high_filtering_kernel_size=7, 
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=7,
                                  high_filtering_strength=3.)
 
-            filtered = cv2.adaptiveThreshold(filtered, 255, 
+            filtered = cv2.adaptiveThreshold(filtered, 255,
                                              cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                             cv2.THRESH_BINARY, 
+                                             cv2.THRESH_BINARY,
                                              27, 15)
-        
+
             grad = naive_gradient(filtered, thresholding=True, threshold=13)
 
         elif method == "Scharr":
-            filtered = filtering(img, low_filtering=True, 
-                                 low_filter_type="uniform", 
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
                                  low_filtering_kernel_size=3,
-                                 high_filtering=True, 
-                                 high_filter_type="gaussian", 
-                                 high_filtering_kernel_size=5, 
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=5,
                                  high_filtering_strength=5.5)
 
-            filtered = cv2.adaptiveThreshold(filtered, 255, 
+            filtered = cv2.adaptiveThreshold(filtered, 255,
                                              cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                             cv2.THRESH_BINARY, 
+                                             cv2.THRESH_BINARY,
                                              27, 15)
-        
+
             grad = scharr_edge(filtered, thresholding=True, threshold=55)
 
         elif method == "Beucher":
-            filtered = filtering(img, low_filtering=True, 
-                                 low_filter_type="uniform", 
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
                                  low_filtering_kernel_size=7,
-                                 high_filtering=True, 
-                                 high_filter_type="gaussian", 
-                                 high_filtering_kernel_size=3, 
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=3,
                                  high_filtering_strength=1.)
 
-            filtered = cv2.adaptiveThreshold(filtered, 255, 
+            filtered = cv2.adaptiveThreshold(filtered, 255,
                                              cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                             cv2.THRESH_BINARY, 
+                                             cv2.THRESH_BINARY,
                                              27, 13)
-        
+
             grad = beucher_edge(filtered, thresholding=True, threshold=97,
                                 kernel_size=3)
 
         elif method == "Canny":
-            filtered = filtering(img, low_filtering=True, 
-                                 low_filter_type="uniform", 
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
                                  low_filtering_kernel_size=3,
-                                 high_filtering=True, 
-                                 high_filter_type="gaussian", 
-                                 high_filtering_kernel_size=7, 
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=7,
                                  high_filtering_strength=2.)
-        
+
             grad = canny_edge(filtered, low_threshold=44,
                                high_threshold=54, aperture_size=3)
 
@@ -440,13 +471,13 @@ def get_optimal_grads(image, method):
 
     else:
         filtered = filtering(img)
-        
+
         if method == "Sobel":
             grad = sobel_edge(filtered)
-        
+
         elif method == "Naive Gradient":
             grad = naive_gradient(filtered)
-        
+
         elif method == "Scharr":
             grad = scharr_edge(filtered)
 
