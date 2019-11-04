@@ -256,7 +256,9 @@ def canny_edge(img, low_threshold=50, high_threshold=255, aperture_size=3):
     A opencv image with the pixel corresponding to edges set to 255 and the
     others set to 0
     """
-    return cv2.Canny(img, low_threshold, high_threshold, None, aperture_size)
+    
+    grad = cv2.Canny(img, low_threshold, high_threshold, None, aperture_size)
+    return clean_grad(grad, False, 1)
 
 def stacking(grads, thresholding = False, threshold = 128):
     """
@@ -411,13 +413,13 @@ def get_optimal_grads(image, method):
         elif method == "Canny":
             filtered = filtering(img, low_filtering=True,
                                  low_filter_type="uniform",
-                                 low_filtering_kernel_size=7,
+                                 low_filtering_kernel_size=3,
                                  high_filtering=True,
                                  high_filter_type="gaussian",
                                  high_filtering_kernel_size=3,
                                  high_filtering_strength=2.)
 
-            grad = canny_edge(filtered, low_threshold=230,
+            grad = canny_edge(filtered, low_threshold=141,
                                high_threshold=255, aperture_size=3)
 
         elif method == "Stacking":
@@ -430,6 +432,18 @@ def get_optimal_grads(image, method):
 
         elif method == "Following":
             grad = following_edge(img, thresh=240, maxval=255)
+
+        elif method == "Laplacian":
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="gaussian",
+                                 low_filtering_kernel_size=7,
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=7,
+                                 high_filtering_strength=1.)
+
+            grad = sobel_edge(filtered, thresholding=True, threshold=26,
+                              kernel_size=3)
 
     elif image == "sudoku":
         if method == "Sobel":
@@ -516,6 +530,23 @@ def get_optimal_grads(image, method):
         elif method == "Following":
             grad = following_edge(img, thresh=45, maxval=255)
 
+        elif method == "Laplacian":
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=5,
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=7,
+                                 high_filtering_strength=1.5)
+
+            filtered = cv2.adaptiveThreshold(filtered, 255,
+                                             cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                             cv2.THRESH_BINARY,
+                                             27, 11)
+
+            grad = laplacian_edge(filtered, thresholding=True, threshold=13,
+                                  kernel_size=3)
+
     else:
         filtered = filtering(img)
 
@@ -544,5 +575,8 @@ def get_optimal_grads(image, method):
 
         elif method == "Following":
             grad = following_edge(img)
+
+        elif method == "Laplacian":
+            grad = laplacian_edge(img)
 
     return grad
