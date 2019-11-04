@@ -362,7 +362,7 @@ def following_edge(img, thresh=240, maxval=255):
     return black_img
 
 
-def get_optimal_grads(image, method):
+def get_optimal_grads(image, image_type, method):
     """
     Get the Edges of the image with the tuned parameters
 
@@ -377,7 +377,7 @@ def get_optimal_grads(image, method):
     """
     img = load_gray_img("img/{}.png".format(image))
 
-    if image == "building":
+    if image_type == "building":
         if method == "Sobel":
             filtered = filtering(img, low_filtering=True,
                                  low_filter_type="uniform",
@@ -437,10 +437,10 @@ def get_optimal_grads(image, method):
                                high_threshold=255, aperture_size=3)
 
         elif method == "Stacking":
-            grads = [get_optimal_grads(image, "Sobel"),
-                     get_optimal_grads(image, "Naive Gradient"),
-                     get_optimal_grads(image, "Scharr"),
-                     get_optimal_grads(image, "Beucher")]
+            grads = [get_optimal_grads(image, image_type, "Sobel"),
+                     get_optimal_grads(image, image_type, "Naive Gradient"),
+                     get_optimal_grads(image, image_type, "Scharr"),
+                     get_optimal_grads(image, image_type, "Beucher")]
 
             grad = stacking(grads, thresholding=True, threshold=129)
 
@@ -459,7 +459,7 @@ def get_optimal_grads(image, method):
             grad = sobel_edge(filtered, thresholding=True, threshold=26,
                               kernel_size=3)
 
-    elif image == "sudoku":
+    elif image_type == "sudoku":
         if method == "Sobel":
             filtered = filtering(img, low_filtering=True,
                                  low_filter_type="uniform",
@@ -522,10 +522,10 @@ def get_optimal_grads(image, method):
                                high_threshold=54, aperture_size=3)
 
         elif method == "Stacking":
-            grads = [get_optimal_grads(image, "Sobel"),
-                     get_optimal_grads(image, "Naive Gradient"),
-                     get_optimal_grads(image, "Scharr"),
-                     get_optimal_grads(image, "Beucher")]
+            grads = [get_optimal_grads(image, image_type, "Sobel"),
+                     get_optimal_grads(image, image_type, "Naive Gradient"),
+                     get_optimal_grads(image, image_type, "Scharr"),
+                     get_optimal_grads(image, image_type, "Beucher")]
 
             grad = stacking(grads, thresholding=True, threshold=103)
 
