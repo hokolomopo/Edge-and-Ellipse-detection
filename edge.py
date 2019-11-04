@@ -491,21 +491,9 @@ def get_optimal_grads(image, method):
             grad = scharr_edge(filtered, thresholding=True, threshold=55)
 
         elif method == "Beucher":
-            filtered = filtering(img, low_filtering=True,
-                                 low_filter_type="uniform",
-                                 low_filtering_kernel_size=7,
-                                 high_filtering=True,
-                                 high_filter_type="gaussian",
-                                 high_filtering_kernel_size=3,
-                                 high_filtering_strength=1.)
-
-            filtered = cv2.adaptiveThreshold(filtered, 255,
-                                             cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                             cv2.THRESH_BINARY,
-                                             27, 13)
-
-            grad = beucher_edge(filtered, thresholding=True, threshold=97,
-                                kernel_size=3)
+            filtered = img
+            grad = beucher_edge(filtered, thresholding=True, threshold=25,
+                                kernel_size=3)  
 
         elif method == "Canny":
             filtered = filtering(img, low_filtering=True,

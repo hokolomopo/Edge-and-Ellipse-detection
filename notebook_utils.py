@@ -142,7 +142,7 @@ def build_ui_edges(default_method = "Sobel"):
     #Thresholding
     th_on = widgets.ToggleButton(value=False, description = "Apply Thresholding")
 
-    th_block = widgets.IntSlider(value = 11, min = 1, max = 27, step = 2, continuous_update=False)
+    th_block = widgets.IntSlider(value = 11, min = 1, max = 51, step = 2, continuous_update=False)
     th_block_box = widgets.HBox([widgets.Label(value="Thresholding Box Size"), th_block])
 
     th_const = widgets.IntSlider(value = 3, min = 1, max = 27, step = 2, continuous_update=False)
@@ -165,7 +165,7 @@ def build_ui_edges(default_method = "Sobel"):
     edge_high_th_box = widgets.HBox([widgets.Label(value="High Threshold"), edge_high_th])
     edge_high_fol_th = widgets.IntSlider(value = 255, min = 1, max = 255, step = 1, continuous_update=False)
     edge_high_th_fol_box = widgets.HBox([widgets.Label(value="High Threshold"), edge_high_fol_th])
-    edge_aperture_size = widgets.IntSlider(value = 3, min = 1, max = 9, step = 2, continuous_update=False)
+    edge_aperture_size = widgets.IntSlider(value = 3, min = 3, max = 9, step = 2, continuous_update=False)
     edge_aperture_size_box = widgets.HBox([widgets.Label(value="Aperture Size"), edge_aperture_size])
 
     sobel_box = widgets.VBox([edge_th_on, edge_th_str_box, edge_kernel_box])
