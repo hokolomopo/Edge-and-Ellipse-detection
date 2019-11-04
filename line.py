@@ -85,8 +85,9 @@ def hough_probabilist(edge_img, img_print, rho=1, theta=np.pi / 180,
     ------
     The contour of the image
     """
-    lines = cv2.HoughLinesP(edge_img, rho, theta, threshold, minLineLength,
-                            maxLineGap)
+    print(minLineLength)
+    lines = cv2.HoughLinesP(edge_img, rho, theta, threshold, None,
+                            minLineLength, maxLineGap)
 
     for (x1, y1, x2, y2) in lines[:, 0]:
         cv2.line(img_print, (x1, y1), (x2, y2), (255, 0, 0), 1)
