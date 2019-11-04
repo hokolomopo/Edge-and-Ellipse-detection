@@ -3,6 +3,8 @@ from matplotlib import pyplot as plt
 import matplotlib.cm as cm
 
 #############################################################################
+#       Code from the practical sessions of the ELEN0016-2 course           #
+#############################################################################
 
 def multiPlot( n, m, img_tuple, title_tuple, cmap_tuple=None, dispType_tuple=None, vmin_tuple=None, vmax_tuple=None):
     plt.figure(figsize=(20,10))

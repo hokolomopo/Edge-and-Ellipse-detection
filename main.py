@@ -71,28 +71,45 @@ def compare_gradient_main(imageName):
     grad = np.concatenate(imgList, axis = 1)
     display_img(grad, len(imgList), True)
 
-def lines_main(imageName, method):
-    img = load_gray_img(imageName)
+def lines_main(image_name, edges_method):
+    lines_method = "HoughProba"
+    kernel_size = 3
 
-    edges = method(img, threshold=50)
 
-    # Apply Hough method
-    lines = cv2.HoughLinesP(edges, 1, np.pi/180, threshold=50, minLineLength=30, maxLineGap=10)
+    img = load_gray_img("img/soccer.png")
 
-    # Draw image wiht lines foud with Hough
+    scale_percent = 0.4
+    width = int(img.shape[1] * scale_percent / 100)
+    height = int(img.shape[0] * scale_percent / 100)
+    dim = (width, height)
+
+    # img = cv2.resize(img, dim)
+    
+    #Extract the Edges
+    filtered = filtering(img, low_filtering=True,
+                            low_filter_type="uniform",
+                            low_filtering_kernel_size=7,
+                            high_filtering=True,
+                            high_filter_type="gaussian",
+                            high_filtering_kernel_size=3,
+                            high_filtering_strength=1.5)
+
+    edges = sobel_edge(filtered, thresholding=True, threshold=30,
+                        kernel_size=5)
+
+    #Create an empty image
     img_w_lines = np.zeros(edges.shape)
-    if lines is not None:
-        for line in lines:
-            x1, y1, x2, y2 = line[0]
-            cv2.line(img_w_lines, (x1, y1), (x2, y2), (255, 0, 0), 1)  
 
-
-    final = get_edges_on_lines(edges, img_w_lines)
-
+    #Get the lines of the images and print them on the empty image
+    get_optimal_lines("building", edges, img_w_lines, lines_method)
+    
+    #Convolve the lines and run the pixel-wise comparison with the edges
+    final, conv = get_edges_on_lines(edges, img_w_lines, kernel_size)
+    
     tools.multiPlot(1, 4, 
-            (img, edges, final, edges-final),
-            ('Edges', 'Lines detected', 'Only Edges on Lines', 'Only Edges not on Lines'),
-            cmap_tuple=(cm.gray, cm.gray, cm.gray, cm.gray))
+        (edges, img_w_lines, conv, final),
+        ('Edges', 'Lines detected', 'Convolved lines', 'Only Edges on Lines'),
+        cmap_tuple=(cm.gray, cm.gray, cm.gray, cm.gray))
 
 
 if __name__ == "__main__":
