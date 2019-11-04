@@ -535,6 +535,96 @@ def get_optimal_grads(image, method):
             grad = laplacian_edge(filtered, thresholding=True, threshold=13,
                                   kernel_size=3)
 
+    elif image == "soccer":
+        if method == "Sobel":
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=9,
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=3,
+                                 high_filtering_strength=4.)
+
+            grad = sobel_edge(filtered, thresholding=True, threshold=8,
+                              kernel_size=5)
+
+        elif method == "Naive Gradient":
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=3,
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=7,
+                                 high_filtering_strength=3.)
+
+            filtered = cv2.adaptiveThreshold(filtered, 255,
+                                             cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                             cv2.THRESH_BINARY,
+                                             27, 15)
+
+            grad = naive_gradient(filtered, thresholding=True, threshold=13)
+
+        elif method == "Scharr":
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=3,
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=5,
+                                 high_filtering_strength=5.5)
+
+            filtered = cv2.adaptiveThreshold(filtered, 255,
+                                             cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                             cv2.THRESH_BINARY,
+                                             27, 15)
+
+            grad = scharr_edge(filtered, thresholding=True, threshold=55)
+
+        elif method == "Beucher":
+            filtered = img
+            grad = beucher_edge(filtered, thresholding=True, threshold=25,
+                                kernel_size=3)  
+
+        elif method == "Canny":
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=3,
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=7,
+                                 high_filtering_strength=2.)
+
+            grad = canny_edge(filtered, low_threshold=44,
+                               high_threshold=54, aperture_size=3)
+
+        elif method == "Stacking":
+            grads = [get_optimal_grads(image, "Sobel"),
+                     get_optimal_grads(image, "Naive Gradient"),
+                     get_optimal_grads(image, "Scharr"),
+                     get_optimal_grads(image, "Beucher")]
+
+            grad = stacking(grads, thresholding=True, threshold=103)
+
+        elif method == "Following":
+            grad = following_edge(img, thresh=45, maxval=255)
+
+        elif method == "Laplacian":
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=5,
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=7,
+                                 high_filtering_strength=1.5)
+
+            filtered = cv2.adaptiveThreshold(filtered, 255,
+                                             cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                             cv2.THRESH_BINARY,
+                                             27, 11)
+
+            grad = laplacian_edge(filtered, thresholding=True, threshold=13,
+                                  kernel_size=3)
+
     else:
         filtered = filtering(img)
 
