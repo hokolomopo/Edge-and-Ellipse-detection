@@ -361,6 +361,18 @@ def following_edge(img, thresh=240, maxval=255):
 
 
 def get_optimal_grads(image, method):
+    """
+    Get the Edges of the image with the tuned parameters
+
+    Parameters
+    ----------
+    - image :       The name of the image to extract the lines from
+    - method :      The method used to extract the edges
+
+    Return
+    ------
+    The edges of the image
+    """
     img = load_gray_img("img/{}.png".format(image))
 
     if image == "building":
