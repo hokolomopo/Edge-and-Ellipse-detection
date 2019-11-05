@@ -102,10 +102,10 @@ def update_edges(method="Sobel", image="building", low_filtering=True,
 def update_stacking(image, thresholding, threshold):
     img = load_gray_img("img/{}.png".format(image))
 
-    grads = [get_optimal_grads(image, "Sobel"),
-             get_optimal_grads(image, "Naive Gradient"),
-             get_optimal_grads(image, "Scharr"),
-             get_optimal_grads(image, "Beucher")]
+    grads = [get_optimal_grads(image, image, "Sobel"),
+             get_optimal_grads(image, image, "Naive Gradient"),
+             get_optimal_grads(image, image, "Scharr"),
+             get_optimal_grads(image, image, "Beucher")]
 
     grad = stacking(grads, thresholding=thresholding, threshold=threshold)
 

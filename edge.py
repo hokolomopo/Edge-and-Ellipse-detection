@@ -549,6 +549,88 @@ def get_optimal_grads(image, image_type, method):
             grad = laplacian_edge(filtered, thresholding=True, threshold=13,
                                   kernel_size=3)
             
+    elif image_type == "soccer":
+        if method == "Sobel":
+            filtered = filtering(img, low_filtering=False,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=3,
+                                 high_filtering=False,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=3,
+                                 high_filtering_strength=2.)
+
+            grad = sobel_edge(filtered, thresholding=True, threshold=29,
+                              kernel_size=1)
+
+        elif method == "Naive Gradient":
+            filtered = filtering(img, low_filtering=False,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=3,
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=3,
+                                 high_filtering_strength=2.)
+
+            grad = naive_gradient(filtered, thresholding=True, threshold=13)
+
+        elif method == "Scharr":
+            filtered = filtering(img, low_filtering=False,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=3,
+                                 high_filtering=False,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=5,
+                                 high_filtering_strength=5.5)
+
+            grad = scharr_edge(filtered, thresholding=True, threshold=29)
+
+        elif method == "Beucher":
+            filtered = filtering(img, low_filtering=False,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=3,
+                                 high_filtering=False,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=7,
+                                 high_filtering_strength=2.)
+
+            grad = beucher_edge(filtered, thresholding=True, threshold=15,
+                                kernel_size=3)  
+
+        elif method == "Canny":
+            filtered = filtering(img, low_filtering=False,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=3,
+                                 high_filtering=True,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=3,
+                                 high_filtering_strength=2.)
+
+            grad = canny_edge(filtered, low_threshold=8,
+                               high_threshold=202, aperture_size=3)
+
+        elif method == "Stacking":
+            grads = [get_optimal_grads(image, image_type, "Sobel"),
+                     get_optimal_grads(image, image_type, "Naive Gradient"),
+                     get_optimal_grads(image, image_type, "Scharr"),
+                     get_optimal_grads(image, image_type, "Beucher")]
+
+            grad = stacking(grads, thresholding=True, threshold=130)
+
+        elif method == "Following":
+            grad = following_edge(img, thresh=45, maxval=255)
+
+        elif method == "Laplacian":
+            filtered = filtering(img, low_filtering=True,
+                                 low_filter_type="uniform",
+                                 low_filtering_kernel_size=3,
+                                 high_filtering=False,
+                                 high_filter_type="gaussian",
+                                 high_filtering_kernel_size=7,
+                                 high_filtering_strength=1.5)
+
+            grad = laplacian_edge(filtered, thresholding=True, threshold=15,
+                                  kernel_size=3)
+
     else:
         filtered = filtering(img)
 
@@ -568,10 +650,10 @@ def get_optimal_grads(image, image_type, method):
             grad = canny_edge(filtered)
 
         elif method == "Stacking":
-            grads = [get_optimal_grads(image, "Sobel"),
-                     get_optimal_grads(image, "Naive Gradient"),
-                     get_optimal_grads(image, "Scharr"),
-                     get_optimal_grads(image, "Beucher")]
+            grads = [get_optimal_grads(image, image_type, "Sobel"),
+                     get_optimal_grads(image, image_type, "Naive Gradient"),
+                     get_optimal_grads(image, image_type, "Scharr"),
+                     get_optimal_grads(image, image_type, "Beucher")]
 
             grad = stacking(grads)
 
