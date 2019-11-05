@@ -11,6 +11,8 @@ from line import *
 import tools
 import matplotlib.cm as cm   
 
+from presentation_scripts import *
+
 def show_main(imageName):
     # Load the image
     img = load_gray_img(imageName)
@@ -115,7 +117,7 @@ def lines_main(image_name, edges_method):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='')
 
-    parser.add_argument("-mode", type=str, choices=["show", "sobel", "naive_gradient", "scharr", "stacking", "compare_gradient", "beucher", "compare"], default='show')
+    parser.add_argument("-mode", type=str, choices=["show", "sobel", "naive_gradient", "scharr", "stacking", "compare_gradient", "beucher", "compare", "print"], default='show')
     parser.add_argument("-task", type=str, choices=["main", "lines", "threshold", "filter", "kernel_filter", "filter_strength"], default = "main")
     parser.add_argument("-image", type=str, default="building")
     
@@ -126,6 +128,9 @@ if __name__ == "__main__":
    
     if mode == "show":
         show_main(imageName)
+
+    if mode == "print":
+        print_main(args.image)
 
     elif mode == "compare_gradient":
         compare_gradient_main(imageName)
@@ -177,3 +182,6 @@ if __name__ == "__main__":
 
         elif task == "lines":
             lines_main(imageName, method)
+
+
+    

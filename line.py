@@ -1,3 +1,9 @@
+#############################################################################
+#       This file contains all the functions associated with                #
+#       lines extraction of an image                                        #
+#############################################################################
+
+
 import cv2
 import numpy as np
 import math

@@ -6,7 +6,7 @@ import matplotlib.cm as cm
 #       Code from the practical sessions of the ELEN0016-2 course           #
 #############################################################################
 
-def multiPlot( n, m, img_tuple, title_tuple, cmap_tuple=None, dispType_tuple=None, vmin_tuple=None, vmax_tuple=None):
+def multiPlot( n, m, img_tuple, title_tuple, cmap_tuple=None, dispType_tuple=None, vmin_tuple=None, vmax_tuple=None, printFile=None):
     plt.figure(figsize=(20,10))
     for i in np.arange( n * m):
         if img_tuple[i] is None:
@@ -46,7 +46,11 @@ def multiPlot( n, m, img_tuple, title_tuple, cmap_tuple=None, dispType_tuple=Non
 
     #manager = plt.get_current_fig_manager()
     #manager.resize(*manager.window.maxsize())
-    plt.show()
+    if(printFile == None):
+        plt.show()
+    else:
+        plt.savefig(printFile)
+    
 
 #############################################################################
 

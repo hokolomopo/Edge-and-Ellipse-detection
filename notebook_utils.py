@@ -1,3 +1,9 @@
+#############################################################################
+#       This file contains all the functions used to lighten the code       #
+#       of the Juypter notebook                                             #
+#############################################################################
+
+
 import cv2
 import numpy as np
 import tools
