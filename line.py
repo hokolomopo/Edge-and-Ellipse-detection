@@ -144,9 +144,8 @@ def get_edges_on_lines(edges, img_w_lines, kernel_size=3):
     The image containing only the edges points on a line and the convoluted image
     """
     final = np.zeros(edges.shape)
-    kernel = np.ones((kernel_size, kernel_size))
-    r = cv2.filter2D(img_w_lines, -1, kernel, borderType=cv2.BORDER_CONSTANT)
-    r = np.where(r > 0, 255.0, 0)
+    r = widen_lines(img_w_lines, kernel_size=kernel_size)
+    
 
     for i in range(edges.shape[0]):
         for j in range(edges.shape[1]):
@@ -158,6 +157,13 @@ def get_edges_on_lines(edges, img_w_lines, kernel_size=3):
                 final[i][j] = 0
 
     return (final, r)
+
+def widen_lines(img, kernel_size = 3):
+    kernel = np.ones((kernel_size, kernel_size))
+    r = cv2.filter2D(img, -1, kernel, borderType=cv2.BORDER_CONSTANT)
+    r = np.where(r > 0, 255.0, 0)
+
+    return r
 
 
 def get_optimal_lines(imageName, edges, print_img, lines_method):

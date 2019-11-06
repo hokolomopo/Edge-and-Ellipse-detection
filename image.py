@@ -17,7 +17,7 @@ def display_img(img, nbImages = 1, wait = True):
         cv2.waitKey(0)
         cv2.destroyAllWindows()
 
-def load_gray_img(fileName):
+def load_gray_img(fileName, scale=None):
     """
     Load an image in gray scale from a file name.
 
@@ -35,7 +35,9 @@ def load_gray_img(fileName):
     img = cv2.imread(fileName, cv2.IMREAD_COLOR)
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     
-    #img = cv2.resize(img, (500, 500))
+    
+    if(scale != None):
+        img = cv2.resize(img,None,fx=scale,fy=scale)
 
     return img
     
