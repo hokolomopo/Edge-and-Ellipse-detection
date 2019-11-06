@@ -191,10 +191,9 @@ def widen_lines(img, kernel_size=3):
     ------
     The image with widened lines
     """
-
     kernel = np.ones((kernel_size, kernel_size))
     r = cv2.filter2D(img, -1, kernel, borderType=cv2.BORDER_CONSTANT)
-    r = np.where(r > 0, 255.0, 0)
+    r = np.where(r > 0, 255, 0).astype(np.uint8)
 
     return r
 
