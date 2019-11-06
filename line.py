@@ -201,7 +201,7 @@ def get_optimal_lines(imageName, edges, print_img, lines_method):
             lines = hough_determinist(edges, print_img, 1, 0.015, 360)
     elif lines_method == "HoughProba":
         if imageName == "soccer":
-            lines = hough_probabilist(edges, print_img, 1, 0.03, 80, 100, 5)
+            lines = hough_probabilist(edges, print_img, 1, 0.03, 80, 110, 5)
         elif imageName == "sudoku":
             lines = hough_probabilist(edges, print_img, 1, 0.015, 50, 100, 5)
         else:
