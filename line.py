@@ -41,7 +41,7 @@ def hough_determinist(edge_img, img_print, rho=1, theta=np.pi / 180,
                 y0 = b * rho
                 pt1 = (int(x0 + 1000 * (-b)), int(y0 + 1000 * (a)))
                 pt2 = (int(x0 - 1000 * (-b)), int(y0 - 1000 * (a)))
-                cv2.line(img_print, pt1, pt2, (255, 0, 0), 1)
+                cv2.line(img_print, pt1, pt2, (255, 0, 0), 2)
 
     return lines
 
@@ -95,7 +95,7 @@ def hough_probabilist(edge_img, img_print, rho=1, theta=np.pi / 180,
                             minLineLength, maxLineGap)
 
     for (x1, y1, x2, y2) in lines[:, 0]:
-        cv2.line(img_print, (x1, y1), (x2, y2), (255, 0, 0), 1)
+        cv2.line(img_print, (x1, y1), (x2, y2), (255, 0, 0), 2)
 
     return lines[:, 0]
 
@@ -182,7 +182,6 @@ def get_optimal_lines(imageName, edges, print_img, lines_method):
     ------
     The lines of the images
     """
-
     if lines_method == "Hough":
         if imageName == "sudoku":
             lines = hough_determinist(edges, print_img, 1, 0.015, 240)
@@ -191,6 +190,8 @@ def get_optimal_lines(imageName, edges, print_img, lines_method):
     elif lines_method == "HoughProba":
         if imageName == "soccer":
             lines = hough_probabilist(edges, print_img, 1, 0.03, 80, 100, 5)
+        elif imageName == "sudoku":
+            lines = hough_probabilist(edges, print_img, 1, 0.015, 50, 100, 5)
         else:
             lines = hough_probabilist(edges, print_img, 1, 0.015, 50, 30, 5)
 
