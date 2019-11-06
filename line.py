@@ -39,8 +39,8 @@ def hough_determinist(edge_img, img_print, rho=1, theta=np.pi / 180,
                 b = math.sin(theta)
                 x0 = a * rho
                 y0 = b * rho
-                pt1 = (int(x0 + 1000 * (-b)), int(y0 + 1000 * (a)))
-                pt2 = (int(x0 - 1000 * (-b)), int(y0 - 1000 * (a)))
+                pt1 = (int(x0 + 2000 * (-b)), int(y0 + 2000 * (a)))
+                pt2 = (int(x0 - 2000 * (-b)), int(y0 - 2000 * (a)))
                 cv2.line(img_print, pt1, pt2, (255, 0, 0), 2)
 
     return lines
