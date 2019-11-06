@@ -41,7 +41,7 @@ def hough_determinist(edge_img, img_print, rho=1, theta=np.pi / 180,
                 y0 = b * rho
                 pt1 = (int(x0 + 1000 * (-b)), int(y0 + 1000 * (a)))
                 pt2 = (int(x0 - 1000 * (-b)), int(y0 - 1000 * (a)))
-                cv2.line(img_print, pt1, pt2, (255, 0, 0), 1)
+                cv2.line(img_print, pt1, pt2, (255, 0, 0), 2)
 
     return lines
 
@@ -95,7 +95,7 @@ def hough_probabilist(edge_img, img_print, rho=1, theta=np.pi / 180,
                             minLineLength, maxLineGap)
 
     for (x1, y1, x2, y2) in lines[:, 0]:
-        cv2.line(img_print, (x1, y1), (x2, y2), (255, 0, 0), 1)
+        cv2.line(img_print, (x1, y1), (x2, y2), (255, 0, 0), 2)
 
     return lines[:, 0]
 
