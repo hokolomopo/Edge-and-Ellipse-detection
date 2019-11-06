@@ -66,7 +66,10 @@ def update_edges(method="Sobel", image="building", low_filtering=True,
         update_stacking(image, thresholding = edge_threshold_on, threshold = edge_threshold)
         return
 
-    img = load_gray_img("img/{}.png".format(image))
+    if image == "sudoku":
+        img = load_gray_img("img/{}.png".format(image), scale = 0.5)
+    else:
+        img = load_gray_img("img/{}.png".format(image))
 
     img_filtered = filtering(img, low_filtering, low_filter_type, low_filtering_kernel_size,
                         high_filtering, high_filter_type, high_filtering_kernel_size, strength)
