@@ -158,7 +158,20 @@ def get_edges_on_lines(edges, img_w_lines, kernel_size=3):
 
     return (final, r)
 
-def widen_lines(img, kernel_size = 3):
+def widen_lines(img, kernel_size=3):
+    """
+    Widen the lines of the image
+
+    Parameters
+    ----------
+    - img :             The image
+    - kernel_size :     The size of the kernel used to widen the lines
+
+    Return
+    ------
+    The image with widened lines
+    """
+
     kernel = np.ones((kernel_size, kernel_size))
     r = cv2.filter2D(img, -1, kernel, borderType=cv2.BORDER_CONSTANT)
     r = np.where(r > 0, 255.0, 0)

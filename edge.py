@@ -297,7 +297,7 @@ def stacking(grads, thresholding = False, threshold = 128):
 
     return tot
 
-def beucher_edge(img, thresholding=True, threshold=60, kernel_size = 3):
+def beucher_edge(img, thresholding=True, threshold=60, kernel_size=3):
     """
     Compute the edges of an image using the Beucher Gradient method.
 
