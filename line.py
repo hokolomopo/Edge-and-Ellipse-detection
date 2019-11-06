@@ -143,20 +143,40 @@ def get_edges_on_lines(edges, img_w_lines, kernel_size=3):
     ------
     The image containing only the edges points on a line and the convoluted image
     """
-    final = np.zeros(edges.shape)
-    r = widen_lines(img_w_lines, kernel_size=kernel_size)
-    
 
-    for i in range(edges.shape[0]):
-        for j in range(edges.shape[1]):
-            if(edges[i][j] == 0):
-                continue
-            if(r[i][j] > 0):
-                final[i][j] = 255
-            else:
-                final[i][j] = 0
+    #Create image that will contain result
+    final = np.zeros(edges.shape)
+
+    #Widen the lines
+    r = widen_lines(img_w_lines, kernel_size=kernel_size)
+
+    #Apply classifier to edges
+    t = np.indices((final.shape[0],final.shape[1])).transpose((1,2,0))
+    f = lambda c : classify(c[0], c[1], r, edges, final)
+    np.apply_along_axis(f, axis=2, arr=t)
 
     return (final, r)
+
+def classify(x, y, lines, edges, final):
+    """
+    Function that classifiy an edge point as being on a line or not and put the result in a given array
+
+    Parameters
+    ----------
+
+    - x :               The x cocordinate of the point
+    - y :               The y cocordinate of the point
+    - lines :           The image containing the lines
+    - edges :           The image containing the edges
+    - final :           The image on wuich to print the result
+    """
+
+    if(edges[x][y] == 0):
+        return
+    if(lines[x][y] > 0):
+        final[x][y] = 255
+    else:
+        final[x][y] = 0
 
 def widen_lines(img, kernel_size=3):
     """
